@@ -188,12 +188,12 @@ const targetMofuSizeScale = 2;
   titleMofuSizeScale を変更すると、
   タイトル画面だけサイズを変更できます。
 */
-const titleMofuCount = 50;
+const titleMofuCount = 100;
 
 const titleMofuMinWidth = 44;
 const titleMofuMaxWidth = 68;
 
-const titleMofuSizeScale = 2;
+const titleMofuSizeScale = 1.5;
 
 
 const useEvenPlacement = true;
