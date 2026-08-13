@@ -112,10 +112,10 @@ const gameModeSettings = {
 
     stageMofuCounts: [
       150,
-      160,
-      170,
-      180,
-      190
+      150,
+      150,
+      150,
+      150
     ],
 
     images: hardMofuImages,
