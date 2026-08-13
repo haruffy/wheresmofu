@@ -3,46 +3,30 @@
   モフをさがせ - game.js
   ============================================================
 
-  【現在の難易度設定】
+  【ゲーム本編のモフサイズ】
 
   ノーマル
-  10 / 20 / 30 / 40 / 50 / 60 / 70 / 80 / 90 / 100
-  使用画像：MoFu_01.png ～ MoFu_05.png
-  種類数：5
-  モフサイズ倍率：1.3
-
-  ハード
-  150 / 160 / 170 / 180 / 190
-  使用画像：MoFu_01.png ～ MoFu_05.png
-  種類数：5
-  モフサイズ倍率：1.3
-
-  スーパーハード
-  150 / 160 / 170 / 180 / 190
-  使用画像：MoFu_01.png ～ MoFu_10.png
-  種類数：10
-  モフサイズ倍率：1.0
-
-  【モフの大きさを変更したい場合】
-
-  gameModeSettings の中にある
-
   mofuSizeScale: 1.3
 
-  の数字を変更してください。
+  ハード
+  mofuSizeScale: 1.3
 
-  1.0 = 今までの大きさ
-  1.1 = 1.1倍
-  1.2 = 1.2倍
-  1.3 = 1.3倍
-  1.4 = 1.4倍
-  1.5 = 1.5倍
+  スーパーハード
+  mofuSizeScale: 1.0
 
-  難易度ごとに別々に設定できます。
 
-  Chromeのページズームや画面サイズ変更時には、
-  ステージを再抽選せず、現在の配置を維持したまま
-  表示サイズだけ調整します。
+  【さがすモフの見本サイズ】
+
+  targetMofuSizeScale: 2
+
+  全難易度共通です。
+
+
+  【タイトル画面のモフサイズ】
+
+  titleMofuSizeScale: 2
+
+  こちらは「さがすモフ」とは別に変更できます。
   ============================================================
 */
 
@@ -99,10 +83,6 @@ const gameModeSettings = {
 
     images: normalMofuImages,
 
-    /*
-      ノーマルのモフサイズ倍率
-      この数字を変更すれば大きさを調整できます。
-    */
     mofuSizeScale: 1.5
   },
 
@@ -120,9 +100,6 @@ const gameModeSettings = {
 
     images: hardMofuImages,
 
-    /*
-      ハードのモフサイズ倍率
-    */
     mofuSizeScale: 1.25
   },
 
@@ -140,11 +117,6 @@ const gameModeSettings = {
 
     images: superHardMofuImages,
 
-    /*
-      スーパーハードのモフサイズ倍率
-
-      1.0なので今までと同じ大きさです。
-    */
     mofuSizeScale: 1.0
   }
 
@@ -177,14 +149,51 @@ const referenceGameWidth = 350;
 
 
 /*
-  ここは倍率をかける前の基本サイズです。
+  ============================================================
+  ゲーム本編モフの基本サイズ
+  ============================================================
 
-  基本的には触らず、
-  gameModeSettings の mofuSizeScale を変更するのがおすすめです。
+  基本的にはここではなく、
+  各難易度の mofuSizeScale を調整してください。
 */
 const minMofuWidthAtReference = 38;
 const maxMofuWidthAtReference = 62;
 const defaultMofuWidthAtReference = 50;
+
+
+/*
+  ============================================================
+  「さがすモフ」の見本画像サイズ
+  ============================================================
+
+  48pxが元のサイズです。
+
+  1.5 = 72px
+  1.3 = 約62px
+  1.0 = 48px
+
+  この数字だけ変えれば調整できます。
+*/
+const targetMofuBaseWidth = 48;
+const targetMofuSizeScale = 2;
+
+
+/*
+  ============================================================
+  タイトル画面のモフ
+  ============================================================
+
+  50体表示します。
+
+  titleMofuSizeScale を変更すると、
+  タイトル画面だけサイズを変更できます。
+*/
+const titleMofuCount = 50;
+
+const titleMofuMinWidth = 44;
+const titleMofuMaxWidth = 68;
+
+const titleMofuSizeScale = 2;
 
 
 const useEvenPlacement = true;
@@ -199,19 +208,17 @@ const answerScaleSmall = 0.9;
 const answerAnimationSpeed = 160;
 
 
-const titleMofuCount = 50;
-const titleMofuMinWidth = 44;
-const titleMofuMaxWidth = 68;
-
-
 const titleScreen =
   document.getElementById("title-screen");
+
 
 const playScreen =
   document.getElementById("play-screen");
 
+
 const titleMofuArea =
   document.getElementById("title-mofu-area");
+
 
 const backTitleButton =
   document.getElementById("back-title-button");
@@ -220,8 +227,10 @@ const backTitleButton =
 const testControls =
   document.getElementById("test-controls");
 
+
 const testModeButtons =
   document.getElementById("test-mode-buttons");
+
 
 const levelButtons =
   document.getElementById("level-buttons");
@@ -230,8 +239,10 @@ const levelButtons =
 const gameScreen =
   document.getElementById("game-screen");
 
+
 const targetMofu =
   document.getElementById("target-mofu");
+
 
 const message =
   document.getElementById("message");
@@ -240,17 +251,22 @@ const message =
 const modeText =
   document.getElementById("mode-text");
 
+
 const levelText =
   document.getElementById("level-text");
+
 
 const countText =
   document.getElementById("count-text");
 
+
 const typeText =
   document.getElementById("type-text");
 
+
 const timeText =
   document.getElementById("time-text");
+
 
 const clearTimeText =
   document.getElementById("clear-time-text");
@@ -259,8 +275,10 @@ const clearTimeText =
 const answerButton =
   document.getElementById("answer-button");
 
+
 const bgmButton =
   document.getElementById("bgm-button");
+
 
 const seButton =
   document.getElementById("se-button");
@@ -314,6 +332,7 @@ let evenPositionIndex = 0;
 const bgmAudio =
   new Audio(soundFiles.bgm);
 
+
 bgmAudio.loop = true;
 bgmAudio.volume = bgmVolume;
 
@@ -354,6 +373,19 @@ function setupSoundVolumes() {
 
   seAudios.clear.volume =
     seVolume;
+
+}
+
+
+function setupTargetMofuSize() {
+
+  const targetWidth =
+    targetMofuBaseWidth *
+    targetMofuSizeScale;
+
+
+  targetMofu.style.width =
+    targetWidth + "px";
 
 }
 
@@ -699,10 +731,6 @@ function getCurrentMofuSizeScale() {
   }
 
 
-  /*
-    設定がない場合は
-    元のサイズの1.0倍にします。
-  */
   return 1.0;
 
 }
@@ -826,6 +854,7 @@ function createTestModeButtons() {
 
         unlockAudioOnce();
 
+
         startTestDifficulty(
           modeKey
         );
@@ -931,6 +960,7 @@ function createLevelButtons() {
 
         unlockAudioOnce();
 
+
         startTestLevel(
           level
         );
@@ -1006,7 +1036,9 @@ function clearGameplayTimers() {
       messageTimer
     );
 
-    messageTimer = null;
+
+    messageTimer =
+      null;
 
   }
 
@@ -1017,7 +1049,9 @@ function clearGameplayTimers() {
       nextLevelTimer
     );
 
-    nextLevelTimer = null;
+
+    nextLevelTimer =
+      null;
 
   }
 
@@ -1085,10 +1119,21 @@ function createTitleMofus() {
       );
 
 
-    const width =
+    /*
+      元のランダムサイズを決めてから
+      タイトル画面専用倍率をかけます。
+    */
+    const baseWidth =
       getRandomInteger(
         titleMofuMinWidth,
         titleMofuMaxWidth
+      );
+
+
+    const width =
+      Math.round(
+        baseWidth *
+        titleMofuSizeScale
       );
 
 
@@ -1389,6 +1434,7 @@ function handleTitleModeButtonClick(
   ) {
 
     startTestMode();
+
 
     return;
 
@@ -1774,10 +1820,6 @@ function getMofuWidth() {
     useRandomSize === true
   ) {
 
-    /*
-      まず今までと同じ方法で
-      ランダムな基本サイズを決めます。
-    */
     const minWidth =
       Math.max(
         24,
@@ -1805,14 +1847,6 @@ function getMofuWidth() {
       );
 
 
-    /*
-      最後に難易度ごとの倍率をかけます。
-
-      例：
-      ノーマル 1.3
-      ハード   1.3
-      スーパー 1.0
-    */
     return Math.round(
       baseRandomWidth *
       modeScale
@@ -3521,9 +3555,8 @@ function revealAnswer() {
     正解モフを最前面には移動しません。
 
     元のレイヤー位置のまま
-    拡大縮小のみ行います。
+    拡大縮小だけを行います。
   */
-
   animateAnswerMofu(
     correctMofu
   );
@@ -3783,6 +3816,9 @@ window.addEventListener(
 
 
 setupSoundVolumes();
+
+
+setupTargetMofuSize();
 
 
 updateSoundButtons();

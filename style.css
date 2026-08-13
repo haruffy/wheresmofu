@@ -9,7 +9,7 @@ html {
 body {
   margin: 0;
   padding: 0;
-  background-color: #B498CF;
+  background-color: #C19AE7;
   font-family: sans-serif;
   color: #333333;
   text-align: center;
@@ -32,7 +32,11 @@ img {
   width: 100%;
   max-width: 390px;
   margin: 0 auto;
-  padding: 8px 0 22px 0;
+
+  /*
+    画面最上部に約1行分の空白を作ります。
+  */
+  padding: 24px 0 22px 0;
 }
 
 
@@ -41,7 +45,7 @@ img {
 ========================================================= */
 
 #title-screen {
-  min-height: calc(100dvh - 30px);
+  min-height: calc(100dvh - 46px);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -182,6 +186,9 @@ img {
 
 /* =========================================================
    テストモード専用
+
+   説明文字は表示せず、
+   難易度ボタンとレベルボタンだけ表示します。
 ========================================================= */
 
 #test-controls {
@@ -199,13 +206,6 @@ img {
 
 #level-select-area {
   margin-top: 4px;
-}
-
-.test-control-title,
-#level-select-title {
-  margin: 0 0 5px 0;
-  font-size: 12px;
-  font-weight: bold;
 }
 
 #test-mode-buttons {
@@ -354,7 +354,7 @@ img {
 
 #target-box {
   width: 100%;
-  min-height: 58px;
+  min-height: 78px;
   margin-bottom: 4px;
   padding: 4px 7px;
   display: grid;
@@ -380,6 +380,12 @@ img {
   white-space: nowrap;
 }
 
+/*
+  実際の見本画像サイズは
+  game.js側から設定します。
+
+  ここでは初期値だけ設定しています。
+*/
 #target-mofu {
   width: 48px;
   height: auto;
@@ -470,10 +476,6 @@ img {
 
   #target-left {
     gap: 7px;
-  }
-
-  #target-mofu {
-    width: 44px;
   }
 
   #answer-button {
