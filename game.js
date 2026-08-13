@@ -91,10 +91,10 @@ const gameModeSettings = {
     label: "ハード",
 
     stageMofuCounts: [
-      150,
-      150,
-      150,
-      150,
+      110,
+      120,
+      130,
+      140,
       150
     ],
 
