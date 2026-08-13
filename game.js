@@ -108,11 +108,11 @@ const gameModeSettings = {
     label: "スーパーハード",
 
     stageMofuCounts: [
-      150,
       160,
       170,
       180,
-      190
+      190,
+      200
     ],
 
     images: superHardMofuImages,
