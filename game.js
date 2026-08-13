@@ -9,22 +9,43 @@
   10 / 20 / 30 / 40 / 50 / 60 / 70 / 80 / 90 / 100
   使用画像：MoFu_01.png ～ MoFu_05.png
   種類数：5
+  モフサイズ倍率：1.3
 
   ハード
   150 / 160 / 170 / 180 / 190
   使用画像：MoFu_01.png ～ MoFu_05.png
   種類数：5
+  モフサイズ倍率：1.3
 
   スーパーハード
   150 / 160 / 170 / 180 / 190
   使用画像：MoFu_01.png ～ MoFu_10.png
   種類数：10
+  モフサイズ倍率：1.0
+
+  【モフの大きさを変更したい場合】
+
+  gameModeSettings の中にある
+
+  mofuSizeScale: 1.3
+
+  の数字を変更してください。
+
+  1.0 = 今までの大きさ
+  1.1 = 1.1倍
+  1.2 = 1.2倍
+  1.3 = 1.3倍
+  1.4 = 1.4倍
+  1.5 = 1.5倍
+
+  難易度ごとに別々に設定できます。
 
   Chromeのページズームや画面サイズ変更時には、
   ステージを再抽選せず、現在の配置を維持したまま
   表示サイズだけ調整します。
   ============================================================
 */
+
 
 const normalMofuImages = [
   "images/MoFu_01.png",
@@ -34,6 +55,7 @@ const normalMofuImages = [
   "images/MoFu_05.png"
 ];
 
+
 const hardMofuImages = [
   "images/MoFu_01.png",
   "images/MoFu_02.png",
@@ -41,6 +63,7 @@ const hardMofuImages = [
   "images/MoFu_04.png",
   "images/MoFu_05.png"
 ];
+
 
 const superHardMofuImages = [
   "images/MoFu_01.png",
@@ -74,7 +97,13 @@ const gameModeSettings = {
       100
     ],
 
-    images: normalMofuImages
+    images: normalMofuImages,
+
+    /*
+      ノーマルのモフサイズ倍率
+      この数字を変更すれば大きさを調整できます。
+    */
+    mofuSizeScale: 1.5
   },
 
 
@@ -89,7 +118,12 @@ const gameModeSettings = {
       190
     ],
 
-    images: hardMofuImages
+    images: hardMofuImages,
+
+    /*
+      ハードのモフサイズ倍率
+    */
+    mofuSizeScale: 1.25
   },
 
 
@@ -104,7 +138,14 @@ const gameModeSettings = {
       190
     ],
 
-    images: superHardMofuImages
+    images: superHardMofuImages,
+
+    /*
+      スーパーハードのモフサイズ倍率
+
+      1.0なので今までと同じ大きさです。
+    */
+    mofuSizeScale: 1.0
   }
 
 };
@@ -123,26 +164,40 @@ const soundFiles = {
 let bgmEnabled = false;
 let seEnabled = true;
 
+
 const bgmVolume = 0.35;
 const seVolume = 0.8;
+
 
 const useRandomRotation = true;
 const useRandomSize = true;
 
+
 const referenceGameWidth = 350;
 
+
+/*
+  ここは倍率をかける前の基本サイズです。
+
+  基本的には触らず、
+  gameModeSettings の mofuSizeScale を変更するのがおすすめです。
+*/
 const minMofuWidthAtReference = 38;
 const maxMofuWidthAtReference = 62;
 const defaultMofuWidthAtReference = 50;
 
+
 const useEvenPlacement = true;
+
 
 const edgeMargin = 4;
 const positionJitterRate = 0.22;
 
+
 const answerScaleLarge = 1.25;
 const answerScaleSmall = 0.9;
 const answerAnimationSpeed = 160;
+
 
 const titleMofuCount = 50;
 const titleMofuMinWidth = 44;
@@ -215,32 +270,42 @@ let currentModeKey = "normal";
 let isTestMode = false;
 let currentLevel = 1;
 
+
 let targetImage = "";
 let previousTargetImage = "";
 
+
 let topZIndex = 1;
+
 
 let messageTimer = null;
 let nextLevelTimer = null;
+
 
 let answerAnimationTimer1 = null;
 let answerAnimationTimer2 = null;
 let answerAnimationTimer3 = null;
 
+
 let resizeTimer = null;
+
 
 let isStageCleared = false;
 let audioStarted = false;
+
 
 let timerInterval = null;
 let timerStartTime = 0;
 let elapsedTimeMs = 0;
 let timerRunning = false;
 
+
 let answerUsedInRun = false;
+
 
 const alphaCanvasCache = {};
 const imageSizeCache = {};
+
 
 let evenPositions = [];
 let evenPositionIndex = 0;
@@ -254,6 +319,7 @@ bgmAudio.volume = bgmVolume;
 
 
 const seAudios = {
+
   correct:
     new Audio(soundFiles.correct),
 
@@ -268,6 +334,7 @@ const seAudios = {
 
   clear:
     new Audio(soundFiles.clear)
+
 };
 
 
@@ -297,8 +364,10 @@ function startBgm() {
     return;
   }
 
+
   const playPromise =
     bgmAudio.play();
+
 
   if (playPromise !== undefined) {
 
@@ -323,17 +392,22 @@ function playSe(name) {
     return;
   }
 
+
   const sound =
     seAudios[name];
+
 
   if (!sound) {
     return;
   }
 
+
   sound.currentTime = 0;
+
 
   const playPromise =
     sound.play();
+
 
   if (playPromise !== undefined) {
 
@@ -396,7 +470,9 @@ function toggleBgm() {
   bgmEnabled =
     !bgmEnabled;
 
+
   updateSoundButtons();
+
 
   if (bgmEnabled === true) {
 
@@ -416,6 +492,7 @@ function toggleSe() {
   seEnabled =
     !seEnabled;
 
+
   updateSoundButtons();
 
 }
@@ -427,7 +504,9 @@ function unlockAudioOnce() {
     return;
   }
 
+
   audioStarted = true;
+
 
   startBgm();
 
@@ -439,10 +518,12 @@ function getAllImagePaths() {
   const uniquePaths =
     new Set();
 
+
   const modeKeys =
     Object.keys(
       gameModeSettings
     );
+
 
   for (
     let i = 0;
@@ -453,10 +534,12 @@ function getAllImagePaths() {
     const modeKey =
       modeKeys[i];
 
+
     const images =
       gameModeSettings[
         modeKey
       ].images;
+
 
     for (
       let j = 0;
@@ -472,6 +555,7 @@ function getAllImagePaths() {
 
   }
 
+
   return Array.from(
     uniquePaths
   );
@@ -484,6 +568,7 @@ function preloadImages(callback) {
   const allImagePaths =
     getAllImagePaths();
 
+
   if (
     allImagePaths.length === 0
   ) {
@@ -493,6 +578,7 @@ function preloadImages(callback) {
     return;
 
   }
+
 
   let loadedCount = 0;
 
@@ -505,6 +591,7 @@ function preloadImages(callback) {
 
     const imagePath =
       allImagePaths[i];
+
 
     const image =
       new Image();
@@ -596,6 +683,31 @@ function getCurrentImages() {
 }
 
 
+function getCurrentMofuSizeScale() {
+
+  const settings =
+    getCurrentModeSettings();
+
+
+  if (
+    typeof settings.mofuSizeScale ===
+    "number"
+  ) {
+
+    return settings.mofuSizeScale;
+
+  }
+
+
+  /*
+    設定がない場合は
+    元のサイズの1.0倍にします。
+  */
+  return 1.0;
+
+}
+
+
 function getMaxLevel() {
 
   return getCurrentModeSettings()
@@ -612,6 +724,7 @@ function getNumberOfMofusForLevel(
   const counts =
     getCurrentModeSettings()
       .stageMofuCounts;
+
 
   const index =
     level - 1;
@@ -685,6 +798,7 @@ function createTestModeButtons() {
 
     const modeKey =
       modeKeys[i];
+
 
     const button =
       document.createElement(
@@ -931,6 +1045,7 @@ function createTitleMofus() {
   const areaWidth =
     titleMofuArea.clientWidth;
 
+
   const areaHeight =
     titleMofuArea.clientHeight;
 
@@ -1026,20 +1141,26 @@ function createTitleMofus() {
     mofu.src =
       imagePath;
 
+
     mofu.alt =
       "";
+
 
     mofu.className =
       "title-mofu";
 
+
     mofu.style.width =
       width + "px";
+
 
     mofu.style.left =
       left + "px";
 
+
     mofu.style.top =
       top + "px";
+
 
     mofu.style.transform =
       "rotate(" +
@@ -1060,13 +1181,16 @@ function showTitleScreen() {
 
   clearGameplayTimers();
 
+
   stopGameTimer();
+
 
   clearGameScreen();
 
 
   playScreen.hidden =
     true;
+
 
   titleScreen.hidden =
     false;
@@ -1090,11 +1214,14 @@ function startMainMode(
   currentModeKey =
     modeKey;
 
+
   isTestMode =
     false;
 
+
   currentLevel =
     1;
+
 
   previousTargetImage =
     "";
@@ -1103,8 +1230,10 @@ function startMainMode(
   testControls.hidden =
     true;
 
+
   titleScreen.hidden =
     true;
+
 
   playScreen.hidden =
     false;
@@ -1112,11 +1241,15 @@ function startMainMode(
 
   clearGameplayTimers();
 
+
   resetGameTimer();
+
 
   createLevelButtons();
 
+
   createGame();
+
 
   startGameTimer();
 
@@ -1128,11 +1261,14 @@ function startTestMode() {
   currentModeKey =
     "normal";
 
+
   isTestMode =
     true;
 
+
   currentLevel =
     1;
+
 
   previousTargetImage =
     "";
@@ -1141,8 +1277,10 @@ function startTestMode() {
   titleScreen.hidden =
     true;
 
+
   playScreen.hidden =
     false;
+
 
   testControls.hidden =
     false;
@@ -1150,13 +1288,18 @@ function startTestMode() {
 
   clearGameplayTimers();
 
+
   resetGameTimer();
+
 
   createTestModeButtons();
 
+
   createLevelButtons();
 
+
   createGame();
+
 
   startGameTimer();
 
@@ -1170,8 +1313,10 @@ function startTestDifficulty(
   currentModeKey =
     modeKey;
 
+
   currentLevel =
     1;
+
 
   previousTargetImage =
     "";
@@ -1179,13 +1324,18 @@ function startTestDifficulty(
 
   clearGameplayTimers();
 
+
   resetGameTimer();
+
 
   createTestModeButtons();
 
+
   createLevelButtons();
 
+
   createGame();
+
 
   startGameTimer();
 
@@ -1199,17 +1349,22 @@ function startTestLevel(
   currentLevel =
     level;
 
+
   previousTargetImage =
     "";
 
 
   clearGameplayTimers();
 
+
   resetGameTimer();
+
 
   updateActiveLevelButton();
 
+
   createGame();
+
 
   startGameTimer();
 
@@ -1315,6 +1470,7 @@ function updateAnswerUsedStyle() {
       "answer-used"
     );
 
+
     clearTimeText.classList.add(
       "answer-used"
     );
@@ -1324,6 +1480,7 @@ function updateAnswerUsedStyle() {
     timeText.classList.remove(
       "answer-used"
     );
+
 
     clearTimeText.classList.remove(
       "answer-used"
@@ -1344,6 +1501,7 @@ function resetGameTimer() {
       timerInterval
     );
 
+
     timerInterval =
       null;
 
@@ -1353,11 +1511,14 @@ function resetGameTimer() {
   timerStartTime =
     0;
 
+
   elapsedTimeMs =
     0;
 
+
   timerRunning =
     false;
+
 
   answerUsedInRun =
     false;
@@ -1365,6 +1526,7 @@ function resetGameTimer() {
 
   timeText.textContent =
     "タイム：0.0秒";
+
 
   clearTimeText.textContent =
     "";
@@ -1388,6 +1550,7 @@ function startGameTimer() {
 
   timerStartTime =
     performance.now();
+
 
   timerRunning =
     true;
@@ -1430,6 +1593,7 @@ function stopGameTimer() {
         timerStartTime
       );
 
+
     timerRunning =
       false;
 
@@ -1443,6 +1607,7 @@ function stopGameTimer() {
     clearInterval(
       timerInterval
     );
+
 
     timerInterval =
       null;
@@ -1459,6 +1624,7 @@ function markAnswerUsed() {
 
   answerUsedInRun =
     true;
+
 
   updateAnswerUsedStyle();
 
@@ -1517,6 +1683,7 @@ function getRandomTargetImage() {
     previousTargetImage =
       images[0];
 
+
     return images[0];
 
   }
@@ -1572,9 +1739,22 @@ function getGameScale() {
 
 function getBaseMofuWidth() {
 
-  return Math.round(
+  const screenScale =
+    getGameScale();
+
+
+  const modeScale =
+    getCurrentMofuSizeScale();
+
+
+  const baseWidth =
     defaultMofuWidthAtReference *
-    getGameScale()
+    screenScale;
+
+
+  return Math.round(
+    baseWidth *
+    modeScale
   );
 
 }
@@ -1582,20 +1762,28 @@ function getBaseMofuWidth() {
 
 function getMofuWidth() {
 
-  const scale =
+  const screenScale =
     getGameScale();
+
+
+  const modeScale =
+    getCurrentMofuSizeScale();
 
 
   if (
     useRandomSize === true
   ) {
 
+    /*
+      まず今までと同じ方法で
+      ランダムな基本サイズを決めます。
+    */
     const minWidth =
       Math.max(
         24,
         Math.round(
           minMofuWidthAtReference *
-          scale
+          screenScale
         )
       );
 
@@ -1605,14 +1793,29 @@ function getMofuWidth() {
         minWidth,
         Math.round(
           maxMofuWidthAtReference *
-          scale
+          screenScale
         )
       );
 
 
-    return getRandomInteger(
-      minWidth,
-      maxWidth
+    const baseRandomWidth =
+      getRandomInteger(
+        minWidth,
+        maxWidth
+      );
+
+
+    /*
+      最後に難易度ごとの倍率をかけます。
+
+      例：
+      ノーマル 1.3
+      ハード   1.3
+      スーパー 1.0
+    */
+    return Math.round(
+      baseRandomWidth *
+      modeScale
     );
 
   }
@@ -1731,6 +1934,7 @@ function clearAnswerAnimationTimers() {
       answerAnimationTimer1
     );
 
+
     answerAnimationTimer1 =
       null;
 
@@ -1745,6 +1949,7 @@ function clearAnswerAnimationTimers() {
       answerAnimationTimer2
     );
 
+
     answerAnimationTimer2 =
       null;
 
@@ -1758,6 +1963,7 @@ function clearAnswerAnimationTimers() {
     clearTimeout(
       answerAnimationTimer3
     );
+
 
     answerAnimationTimer3 =
       null;
@@ -1848,6 +2054,7 @@ function showWrongMessage() {
         message.textContent =
           "同じモフをタップしてね";
 
+
         messageTimer =
           null;
 
@@ -1887,6 +2094,7 @@ function showAnswerMessage() {
     clearTimeout(
       messageTimer
     );
+
 
     messageTimer =
       null;
@@ -1986,12 +2194,14 @@ function createEvenPositions(
   evenPositions =
     [];
 
+
   evenPositionIndex =
     0;
 
 
   const gameScreenWidth =
     gameScreen.clientWidth;
+
 
   const gameScreenHeight =
     gameScreen.clientHeight;
@@ -2081,6 +2291,7 @@ function createEvenPositions(
 
 
       evenPositions.push({
+
         x:
           centerX +
           jitterX,
@@ -2088,6 +2299,7 @@ function createEvenPositions(
         y:
           centerY +
           jitterY
+
       });
 
     }
@@ -2109,6 +2321,7 @@ function getRandomPosition(
 
   const gameScreenWidth =
     gameScreen.clientWidth;
+
 
   const gameScreenHeight =
     gameScreen.clientHeight;
@@ -2163,6 +2376,7 @@ function getPositionFromCenter(
 
   const gameScreenWidth =
     gameScreen.clientWidth;
+
 
   const gameScreenHeight =
     gameScreen.clientHeight;
@@ -2253,11 +2467,13 @@ function getPositionFromCenter(
 
 
   return {
+
     left:
       left,
 
     top:
       top
+
   };
 
 }
@@ -2310,6 +2526,7 @@ function saveResponsivePlacementData(
 
   const screenWidth =
     gameScreen.clientWidth;
+
 
   const screenHeight =
     gameScreen.clientHeight;
@@ -2468,14 +2685,6 @@ function updateGameInfo(
     numberOfMofus;
 
 
-  /*
-    使用している画像配列の数を
-    そのまま種類数として表示します。
-
-    ノーマル：5
-    ハード：5
-    スーパーハード：10
-  */
   typeText.textContent =
     "種類：" +
     settings.images.length;
@@ -2486,6 +2695,7 @@ function updateGameInfo(
   ) {
 
     updateActiveTestModeButton();
+
 
     updateActiveLevelButton();
 
@@ -2518,6 +2728,7 @@ function createGame() {
       messageTimer
     );
 
+
     messageTimer =
       null;
 
@@ -2531,6 +2742,7 @@ function createGame() {
     clearTimeout(
       nextLevelTimer
     );
+
 
     nextLevelTimer =
       null;
@@ -3367,6 +3579,7 @@ function handleMofuClick(
 
       stopGameTimer();
 
+
       showClearTime();
 
     }
@@ -3514,6 +3727,7 @@ backTitleButton.addEventListener(
 
     unlockAudioOnce();
 
+
     showTitleScreen();
 
   }
@@ -3526,6 +3740,7 @@ bgmButton.addEventListener(
 
     unlockAudioOnce();
 
+
     toggleBgm();
 
   }
@@ -3537,6 +3752,7 @@ seButton.addEventListener(
   function () {
 
     unlockAudioOnce();
+
 
     toggleSe();
 
@@ -3567,6 +3783,7 @@ window.addEventListener(
 
 
 setupSoundVolumes();
+
 
 updateSoundButtons();
 
