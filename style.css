@@ -1,0 +1,482 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #d8f3ff;
+  font-family: sans-serif;
+  color: #333333;
+  text-align: center;
+}
+
+button {
+  font-family: inherit;
+  touch-action: manipulation;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+#app {
+  width: 100%;
+  max-width: 390px;
+  margin: 0 auto;
+  padding: 8px 0 22px 0;
+}
+
+
+/* =========================================================
+   タイトル画面
+========================================================= */
+
+#title-screen {
+  min-height: calc(100dvh - 30px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+#title-card {
+  width: min(calc(100% - 8px), 350px);
+  padding: 24px 18px 22px 18px;
+  background-color: #ffffff;
+  border: 3px solid #333333;
+}
+
+#title-logo {
+  margin: 0 0 10px 0;
+  font-size: 34px;
+  line-height: 1.2;
+  font-weight: bold;
+}
+
+#title-description {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#title-mofu-area {
+  position: relative;
+  width: 100%;
+  height: 145px;
+  margin: 0 0 16px 0;
+  overflow: hidden;
+}
+
+.title-mofu {
+  position: absolute;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  transform-origin: center center;
+}
+
+#title-mode-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.title-mode-button {
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 3px solid #333333;
+  background-color: #ffffff;
+  color: #333333;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.title-mode-button:hover,
+.title-mode-button:active {
+  background-color: #f0f0f0;
+}
+
+.title-mode-button.test-button {
+  margin-top: 4px;
+  border-style: dashed;
+  font-size: 16px;
+}
+
+#title-note {
+  margin: 14px 0 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #666666;
+}
+
+
+/* =========================================================
+   ゲーム画面
+========================================================= */
+
+#play-screen {
+  width: 100%;
+}
+
+#game-container {
+  width: min(calc(100% - 8px), 350px);
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   1段目
+   タイトルへ / BGM / SE
+========================================================= */
+
+#top-control-row {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+#back-title-button,
+#bgm-button,
+#se-button,
+#answer-button {
+  min-width: 0;
+  min-height: 34px;
+  padding: 5px 4px;
+  border: 2px solid #333333;
+  background-color: #ffffff;
+  color: #333333;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#back-title-button:hover,
+#bgm-button:hover,
+#se-button:hover,
+#answer-button:hover,
+#back-title-button:active,
+#bgm-button:active,
+#se-button:active,
+#answer-button:active {
+  background-color: #f0f0f0;
+}
+
+#bgm-button.sound-off,
+#se-button.sound-off {
+  background-color: #dddddd;
+  color: #666666;
+}
+
+
+/* =========================================================
+   テストモード専用
+========================================================= */
+
+#test-controls {
+  width: 100%;
+  margin: 0 0 4px 0;
+}
+
+#test-mode-select-area,
+#level-select-area {
+  width: 100%;
+  padding: 6px;
+  background-color: #ffffff;
+  border: 2px solid #333333;
+}
+
+#level-select-area {
+  margin-top: 4px;
+}
+
+.test-control-title,
+#level-select-title {
+  margin: 0 0 5px 0;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+#test-mode-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.test-mode-button {
+  min-height: 32px;
+  padding: 4px 2px;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #ffffff;
+  border: 2px solid #333333;
+  color: #333333;
+}
+
+.test-mode-button.active {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+#level-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.level-button {
+  min-height: 30px;
+  padding: 3px 0;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #ffffff;
+  border: 2px solid #333333;
+  color: #333333;
+}
+
+.level-button.active {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   2段目・3段目
+========================================================= */
+
+#game-info {
+  width: 100%;
+  margin-bottom: 4px;
+  padding: 5px 7px;
+  background-color: #ffffff;
+  border: 2px solid #333333;
+}
+
+#status-row-main {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr 0.65fr;
+  gap: 5px;
+  align-items: center;
+}
+
+#status-row-sub {
+  display: grid;
+  grid-template-columns: 1fr 0.75fr 1.3fr;
+  gap: 4px;
+  align-items: center;
+  margin-top: 3px;
+}
+
+#game-name-text,
+#mode-text,
+#level-text,
+#count-text,
+#type-text,
+#time-text,
+#clear-time-text {
+  margin: 0;
+  font-weight: bold;
+}
+
+#game-name-text {
+  font-size: 15px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+#mode-text {
+  font-size: 13px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+#level-text {
+  font-size: 13px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+#count-text {
+  font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+#type-text {
+  font-size: 12px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+#time-text {
+  font-size: 12px;
+  text-align: right;
+  color: #333333;
+  white-space: nowrap;
+}
+
+#time-text.answer-used {
+  color: #d60000;
+}
+
+#clear-time-text {
+  margin-top: 4px;
+  font-size: 13px;
+  text-align: center;
+}
+
+#clear-time-text:empty {
+  display: none;
+}
+
+#clear-time-text.answer-used {
+  color: #d60000;
+}
+
+
+/* =========================================================
+   4段目
+   さがすモフ / 答えを表示
+========================================================= */
+
+#target-box {
+  width: 100%;
+  min-height: 58px;
+  margin-bottom: 4px;
+  padding: 4px 7px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffffff;
+  border: 2px solid #333333;
+}
+
+#target-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+#target-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+#target-mofu {
+  width: 48px;
+  height: auto;
+  user-select: none;
+}
+
+#answer-button {
+  min-width: 104px;
+  min-height: 36px;
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   メインゲーム画面
+========================================================= */
+
+#game-screen {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: 3px solid #333333;
+  overflow: hidden;
+  box-sizing: border-box;
+  touch-action: manipulation;
+}
+
+.mofu-item {
+  position: absolute;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform-origin: center center;
+  transition: transform 0.16s ease;
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   最下段メッセージ
+========================================================= */
+
+#message {
+  min-height: 26px;
+  margin: 7px 0 0 0;
+  font-size: 17px;
+  line-height: 1.4;
+  font-weight: bold;
+}
+
+
+/* =========================================================
+   小さいスマホ
+========================================================= */
+
+@media (max-width: 350px) {
+
+  #game-container,
+  #title-card {
+    width: calc(100% - 6px);
+  }
+
+  #title-logo {
+    font-size: 30px;
+  }
+
+  #game-name-text {
+    font-size: 14px;
+  }
+
+  #mode-text,
+  #level-text {
+    font-size: 12px;
+  }
+
+  #count-text,
+  #type-text,
+  #time-text {
+    font-size: 11px;
+  }
+
+  #status-row-sub {
+    grid-template-columns: 1fr 0.72fr 1.28fr;
+    gap: 2px;
+  }
+
+  #target-left {
+    gap: 7px;
+  }
+
+  #target-mofu {
+    width: 44px;
+  }
+
+  #answer-button {
+    min-width: 96px;
+  }
+}

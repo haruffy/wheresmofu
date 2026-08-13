@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>モフをさがせ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+
+    <section id="title-screen">
+      <div id="title-card">
+
+        <h1 id="title-logo">モフをさがせ</h1>
+
+        <p id="title-description">
+          プレイするモードを選んでね
+        </p>
+
+        <div id="title-mofu-area" aria-hidden="true"></div>
+
+        <div id="title-mode-buttons">
+          <button
+            class="title-mode-button"
+            data-start-mode="normal"
+          >
+            ノーマル
+          </button>
+
+          <button
+            class="title-mode-button"
+            data-start-mode="hard"
+          >
+            ハード
+          </button>
+
+          <button
+            class="title-mode-button"
+            data-start-mode="superHard"
+          >
+            スーパーハード
+          </button>
+
+          <button
+            class="title-mode-button test-button"
+            data-start-mode="test"
+          >
+            テスト
+          </button>
+        </div>
+
+        <p id="title-note">
+          難易度を選択してゲームスタート！
+        </p>
+
+      </div>
+    </section>
+
+
+    <section id="play-screen" hidden>
+
+      <div id="game-container">
+
+        <div id="top-control-row">
+
+          <button id="back-title-button">
+            タイトルへ
+          </button>
+
+          <button id="bgm-button">
+            BGM：OFF
+          </button>
+
+          <button id="se-button">
+            SE：ON
+          </button>
+
+        </div>
+
+
+        <div id="test-controls" hidden>
+
+          <div id="test-mode-select-area">
+
+            <p class="test-control-title">
+              テストする難易度
+            </p>
+
+            <div id="test-mode-buttons"></div>
+
+          </div>
+
+
+          <div id="level-select-area">
+
+            <p id="level-select-title">
+              レベルを選んでね
+            </p>
+
+            <div id="level-buttons"></div>
+
+          </div>
+
+        </div>
+
+
+        <div id="game-info">
+
+          <div id="status-row-main">
+
+            <p id="game-name-text">
+              モフをさがせ
+            </p>
+
+            <p id="mode-text">
+              ノーマル
+            </p>
+
+            <p id="level-text">
+              1 / 10
+            </p>
+
+          </div>
+
+
+          <div id="status-row-sub">
+
+            <p id="count-text">
+              表示数：10
+            </p>
+
+            <p id="type-text">
+              種類：5
+            </p>
+
+            <p id="time-text">
+              タイム：0.0秒
+            </p>
+
+          </div>
+
+
+          <p id="clear-time-text"></p>
+
+        </div>
+
+
+        <div id="target-box">
+
+          <div id="target-left">
+
+            <p id="target-title">
+              さがすモフ
+            </p>
+
+            <img
+              id="target-mofu"
+              src=""
+              alt="正解のモフ"
+            >
+
+          </div>
+
+
+          <button id="answer-button">
+            答えを表示
+          </button>
+
+        </div>
+
+
+        <div id="game-screen"></div>
+
+
+        <p id="message">
+          同じモフをタップしてね
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
