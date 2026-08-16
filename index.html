@@ -10,79 +10,50 @@
   <main id="app">
 
     <section id="title-screen">
-      <div id="title-card">
+      <div id="title-container">
 
-        <h1 id="title-logo">モフをさがせ</h1>
-
-        <p id="title-description">
-          同じモフが１体だけあるよ！
-        </p>
-
-        <div id="title-mofu-area" aria-hidden="true"></div>
-
-        <div id="title-mode-buttons">
-
-          <button
-            class="title-mode-button"
-            data-start-mode="normal"
-          >
-            ノーマル
-          </button>
-
-          <button
-            class="title-mode-button"
-            data-start-mode="hard"
-          >
-            ハード
-          </button>
-
-          <button
-            class="title-mode-button"
-            data-start-mode="superHard"
-          >
-            スーパーハード
-          </button>
-
-          <button
-            class="title-mode-button test-button"
-            data-start-mode="test"
-          >
-            テスト
-          </button>
-
+        <div id="title-sound-row">
+          <div class="title-sound-spacer" aria-hidden="true"></div>
+          <button id="title-bgm-button">BGM：OFF</button>
+          <button id="title-se-button">SE：ON</button>
         </div>
 
-        <p id="title-note">
-          難易度を選択してください。
-        </p>
+        <div id="title-card">
+          <h1 id="title-logo">モフをさがせ</h1>
+
+          <p id="title-description" class="title-guide-text">
+            同じポーズのモフを探してね
+          </p>
+
+          <div id="title-mofu-area" aria-hidden="true"></div>
+
+          <p id="title-start-text" class="title-guide-text">
+            難易度を選択したらスタート！
+          </p>
+
+          <div id="title-mode-buttons">
+            <button class="title-mode-button" data-start-mode="normal">ノーマル</button>
+            <button class="title-mode-button" data-start-mode="hard">ハード</button>
+            <button class="title-mode-button" data-start-mode="superHard">スーパーハード</button>
+            <button class="title-mode-button test-button" data-start-mode="test">テスト</button>
+          </div>
+        </div>
 
       </div>
     </section>
 
 
     <section id="play-screen" hidden>
-
       <div id="game-container">
 
         <div id="top-control-row">
-
-          <button id="back-title-button">
-            タイトルへ
-          </button>
-
-          <button id="bgm-button">
-            BGM：OFF
-          </button>
-
-          <button id="se-button">
-            SE：ON
-          </button>
-
+          <button id="back-title-button">タイトルへ</button>
+          <button id="bgm-button">BGM：OFF</button>
+          <button id="se-button">SE：ON</button>
         </div>
 
 
         <div id="test-controls" hidden>
-
           <div id="test-mode-select-area">
             <div id="test-mode-buttons"></div>
           </div>
@@ -90,83 +61,41 @@
           <div id="level-select-area">
             <div id="level-buttons"></div>
           </div>
-
         </div>
 
 
         <div id="game-info">
-
           <div id="status-row-main">
-
-            <p id="game-name-text">
-              モフをさがせ
-            </p>
-
-            <p id="mode-text">
-              ノーマル
-            </p>
-
-            <p id="level-text">
-              1 / 10
-            </p>
-
+            <p id="game-name-text">モフをさがせ</p>
+            <p id="mode-text">ノーマル</p>
+            <p id="level-text">1 / 10</p>
           </div>
-
 
           <div id="status-row-sub">
-
-            <p id="count-text">
-              表示数：10
-            </p>
-
-            <p id="type-text">
-              種類：5
-            </p>
-
-            <p id="time-text">
-              タイム：0.0秒
-            </p>
-
+            <p id="count-text">表示数：10</p>
+            <p id="type-text">種類：5</p>
+            <p id="time-text">タイム：0.0秒</p>
           </div>
 
-
           <p id="clear-time-text"></p>
-
         </div>
 
 
         <div id="target-box">
-
           <div id="target-left">
-
-            <p id="target-title">
-              さがすモフ
-            </p>
-
-            <img
-              id="target-mofu"
-              src=""
-              alt="正解のモフ"
-            >
-
+            <p id="target-title">さがすモフ</p>
+            <img id="target-mofu" src="" alt="正解のモフ">
           </div>
 
-          <button id="answer-button">
-            答えを表示
-          </button>
-
+          <button id="answer-button">答えを表示</button>
         </div>
 
 
         <div id="game-screen"></div>
 
-
-        <p id="message">
-          同じモフをタップしてね
-        </p>
+        <p id="message">同じモフをタップしてね</p>
 
       </div>
-
     </section>
 
   </main>

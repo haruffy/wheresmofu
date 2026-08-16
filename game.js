@@ -3,33 +3,40 @@
   モフをさがせ - game.js
   ============================================================
 
-  【ゲーム本編のモフサイズ】
+  【現在の設定】
 
   ノーマル
-  mofuSizeScale: 1.3
+  ・表示数：10 / 20 / 30 / 40 / 50 / 60 / 70 / 80 / 90 / 100
+  ・種類数：5
+  ・ゲーム内モフサイズ倍率：1.5
 
   ハード
-  mofuSizeScale: 1.3
+  ・表示数：150 / 150 / 150 / 150 / 150
+  ・種類数：5
+  ・ゲーム内モフサイズ倍率：1.25
 
   スーパーハード
-  mofuSizeScale: 1.0
+  ・表示数：150 / 160 / 170 / 180 / 190
+  ・種類数：10
+  ・ゲーム内モフサイズ倍率：1.0
 
+  さがすモフ
+  ・targetMofuSizeScale = 2
 
-  【さがすモフの見本サイズ】
+  タイトル画面
+  ・100体
+  ・titleMofuSizeScale = 1.5
 
-  targetMofuSizeScale: 2
-
-  全難易度共通です。
-
-
-  【タイトル画面のモフサイズ】
-
-  titleMofuSizeScale: 2
-
-  こちらは「さがすモフ」とは別に変更できます。
+  【回答不能配置対策】
+  全モフ配置後、正解モフに実際にクリックできる場所があるか確認します。
+  クリックできる場所がなければ、正解モフだけ位置を変えて再確認します。
   ============================================================
 */
 
+
+/* ============================================================
+   画像設定
+============================================================ */
 
 const normalMofuImages = [
   "images/MoFu_01.png",
@@ -39,7 +46,6 @@ const normalMofuImages = [
   "images/MoFu_05.png"
 ];
 
-
 const hardMofuImages = [
   "images/MoFu_01.png",
   "images/MoFu_02.png",
@@ -47,7 +53,6 @@ const hardMofuImages = [
   "images/MoFu_04.png",
   "images/MoFu_05.png"
 ];
-
 
 const superHardMofuImages = [
   "images/MoFu_01.png",
@@ -63,11 +68,16 @@ const superHardMofuImages = [
 ];
 
 
-const gameModeSettings = {
+/* ============================================================
+   難易度設定
 
+   mofuSizeScale の数字を変えると、
+   難易度ごとにゲーム内モフの大きさを変更できます。
+============================================================ */
+
+const gameModeSettings = {
   normal: {
     label: "ノーマル",
-
     stageMofuCounts: [
       10,
       20,
@@ -80,48 +90,41 @@ const gameModeSettings = {
       90,
       100
     ],
-
     images: normalMofuImages,
-
     mofuSizeScale: 1.5
   },
 
-
   hard: {
     label: "ハード",
-
     stageMofuCounts: [
-      110,
-      120,
-      130,
-      140,
+      150,
+      150,
+      150,
+      150,
       150
     ],
-
     images: hardMofuImages,
-
     mofuSizeScale: 1.25
   },
 
-
   superHard: {
     label: "スーパーハード",
-
     stageMofuCounts: [
+      150,
       160,
       170,
       180,
-      190,
-      200
+      190
     ],
-
     images: superHardMofuImages,
-
     mofuSizeScale: 1.0
   }
-
 };
 
+
+/* ============================================================
+   音声設定
+============================================================ */
 
 const soundFiles = {
   bgm: "sounds/bgm_main.mp3",
@@ -132,684 +135,402 @@ const soundFiles = {
   clear: "sounds/se_clear.mp3"
 };
 
-
 let bgmEnabled = false;
 let seEnabled = true;
-
 
 const bgmVolume = 0.35;
 const seVolume = 0.8;
 
 
+/* ============================================================
+   ゲーム内モフの見た目設定
+============================================================ */
+
 const useRandomRotation = true;
 const useRandomSize = true;
 
-
 const referenceGameWidth = 350;
 
-
-/*
-  ============================================================
-  ゲーム本編モフの基本サイズ
-  ============================================================
-
-  基本的にはここではなく、
-  各難易度の mofuSizeScale を調整してください。
-*/
 const minMofuWidthAtReference = 38;
 const maxMofuWidthAtReference = 62;
 const defaultMofuWidthAtReference = 50;
 
-
-/*
-  ============================================================
-  「さがすモフ」の見本画像サイズ
-  ============================================================
-
-  48pxが元のサイズです。
-
-  1.5 = 72px
-  1.3 = 約62px
-  1.0 = 48px
-
-  この数字だけ変えれば調整できます。
-*/
-const targetMofuBaseWidth = 48;
-const targetMofuSizeScale = 2;
-
-
-/*
-  ============================================================
-  タイトル画面のモフ
-  ============================================================
-
-  50体表示します。
-
-  titleMofuSizeScale を変更すると、
-  タイトル画面だけサイズを変更できます。
-*/
-const titleMofuCount = 100;
-
-const titleMofuMinWidth = 44;
-const titleMofuMaxWidth = 68;
-
-const titleMofuSizeScale = 1.5;
-
-
 const useEvenPlacement = true;
-
 
 const edgeMargin = 4;
 const positionJitterRate = 0.22;
 
+
+/* ============================================================
+   「さがすモフ」のサイズ設定
+
+   全難易度共通です。
+   この数字だけ変えれば調整できます。
+============================================================ */
+
+const targetMofuBaseWidth = 48;
+const targetMofuSizeScale = 2;
+
+
+/* ============================================================
+   タイトル画面のモフ設定
+
+   タイトル画面だけ独立して調整できます。
+============================================================ */
+
+const titleMofuCount = 100;
+const titleMofuMinWidth = 44;
+const titleMofuMaxWidth = 68;
+const titleMofuSizeScale = 1.5;
+
+
+/* ============================================================
+   答え表示アニメーション
+============================================================ */
 
 const answerScaleLarge = 1.25;
 const answerScaleSmall = 0.9;
 const answerAnimationSpeed = 160;
 
 
-const titleScreen =
-  document.getElementById("title-screen");
+/* ============================================================
+   回答不能配置対策
+
+   answerVisibilityGridSize
+   正解モフの中を何分割してチェックするか。
+   9なら最大81点をチェックします。
+
+   minimumAnswerVisibleSamplePoints
+   何点クリック可能ならOKとするか。
+
+   maxAnswerPlacementRetries
+   正解モフだけを再配置する最大回数。
+============================================================ */
+
+const answerVisibilityGridSize = 9;
+const minimumAnswerVisibleSamplePoints = 1;
+const maxAnswerPlacementRetries = 30;
 
 
-const playScreen =
-  document.getElementById("play-screen");
+/* ============================================================
+   DOM取得
+============================================================ */
+
+const titleScreen = document.getElementById("title-screen");
+const playScreen = document.getElementById("play-screen");
+const titleMofuArea = document.getElementById("title-mofu-area");
+
+const titleBgmButton = document.getElementById("title-bgm-button");
+const titleSeButton = document.getElementById("title-se-button");
+
+const backTitleButton = document.getElementById("back-title-button");
+
+const testControls = document.getElementById("test-controls");
+const testModeButtons = document.getElementById("test-mode-buttons");
+const levelButtons = document.getElementById("level-buttons");
+
+const gameScreen = document.getElementById("game-screen");
+const targetMofu = document.getElementById("target-mofu");
+const message = document.getElementById("message");
+
+const modeText = document.getElementById("mode-text");
+const levelText = document.getElementById("level-text");
+const countText = document.getElementById("count-text");
+const typeText = document.getElementById("type-text");
+const timeText = document.getElementById("time-text");
+const clearTimeText = document.getElementById("clear-time-text");
+
+const answerButton = document.getElementById("answer-button");
+const bgmButton = document.getElementById("bgm-button");
+const seButton = document.getElementById("se-button");
 
 
-const titleMofuArea =
-  document.getElementById("title-mofu-area");
-
-
-const backTitleButton =
-  document.getElementById("back-title-button");
-
-
-const testControls =
-  document.getElementById("test-controls");
-
-
-const testModeButtons =
-  document.getElementById("test-mode-buttons");
-
-
-const levelButtons =
-  document.getElementById("level-buttons");
-
-
-const gameScreen =
-  document.getElementById("game-screen");
-
-
-const targetMofu =
-  document.getElementById("target-mofu");
-
-
-const message =
-  document.getElementById("message");
-
-
-const modeText =
-  document.getElementById("mode-text");
-
-
-const levelText =
-  document.getElementById("level-text");
-
-
-const countText =
-  document.getElementById("count-text");
-
-
-const typeText =
-  document.getElementById("type-text");
-
-
-const timeText =
-  document.getElementById("time-text");
-
-
-const clearTimeText =
-  document.getElementById("clear-time-text");
-
-
-const answerButton =
-  document.getElementById("answer-button");
-
-
-const bgmButton =
-  document.getElementById("bgm-button");
-
-
-const seButton =
-  document.getElementById("se-button");
-
+/* ============================================================
+   ゲーム状態
+============================================================ */
 
 let currentModeKey = "normal";
 let isTestMode = false;
 let currentLevel = 1;
 
-
 let targetImage = "";
 let previousTargetImage = "";
 
-
 let topZIndex = 1;
-
 
 let messageTimer = null;
 let nextLevelTimer = null;
-
 
 let answerAnimationTimer1 = null;
 let answerAnimationTimer2 = null;
 let answerAnimationTimer3 = null;
 
-
 let resizeTimer = null;
-
 
 let isStageCleared = false;
 let audioStarted = false;
-
 
 let timerInterval = null;
 let timerStartTime = 0;
 let elapsedTimeMs = 0;
 let timerRunning = false;
 
-
 let answerUsedInRun = false;
-
 
 const alphaCanvasCache = {};
 const imageSizeCache = {};
-
 
 let evenPositions = [];
 let evenPositionIndex = 0;
 
 
-const bgmAudio =
-  new Audio(soundFiles.bgm);
+/* ============================================================
+   音声オブジェクト
+============================================================ */
 
-
+const bgmAudio = new Audio(soundFiles.bgm);
 bgmAudio.loop = true;
 bgmAudio.volume = bgmVolume;
 
-
 const seAudios = {
-
-  correct:
-    new Audio(soundFiles.correct),
-
-  wrong:
-    new Audio(soundFiles.wrong),
-
-  reveal:
-    new Audio(soundFiles.reveal),
-
-  nextLevel:
-    new Audio(soundFiles.nextLevel),
-
-  clear:
-    new Audio(soundFiles.clear)
-
+  correct: new Audio(soundFiles.correct),
+  wrong: new Audio(soundFiles.wrong),
+  reveal: new Audio(soundFiles.reveal),
+  nextLevel: new Audio(soundFiles.nextLevel),
+  clear: new Audio(soundFiles.clear)
 };
 
 
+/* ============================================================
+   音声処理
+============================================================ */
+
 function setupSoundVolumes() {
-
-  seAudios.correct.volume =
-    seVolume;
-
-  seAudios.wrong.volume =
-    seVolume;
-
-  seAudios.reveal.volume =
-    seVolume;
-
-  seAudios.nextLevel.volume =
-    seVolume;
-
-  seAudios.clear.volume =
-    seVolume;
-
+  seAudios.correct.volume = seVolume;
+  seAudios.wrong.volume = seVolume;
+  seAudios.reveal.volume = seVolume;
+  seAudios.nextLevel.volume = seVolume;
+  seAudios.clear.volume = seVolume;
 }
-
-
-function setupTargetMofuSize() {
-
-  const targetWidth =
-    targetMofuBaseWidth *
-    targetMofuSizeScale;
-
-
-  targetMofu.style.width =
-    targetWidth + "px";
-
-}
-
 
 function startBgm() {
-
   if (bgmEnabled === false) {
     return;
   }
 
-
-  const playPromise =
-    bgmAudio.play();
-
+  const playPromise = bgmAudio.play();
 
   if (playPromise !== undefined) {
-
     playPromise.catch(function () {
     });
-
   }
-
 }
-
 
 function stopBgm() {
-
   bgmAudio.pause();
-
 }
 
-
 function playSe(name) {
-
   if (seEnabled === false) {
     return;
   }
 
-
-  const sound =
-    seAudios[name];
-
+  const sound = seAudios[name];
 
   if (!sound) {
     return;
   }
 
-
   sound.currentTime = 0;
 
-
-  const playPromise =
-    sound.play();
-
+  const playPromise = sound.play();
 
   if (playPromise !== undefined) {
-
     playPromise.catch(function () {
     });
-
   }
-
 }
 
+function playUiClickSe() {
+  playSe("wrong");
+}
+
+function setSoundButtonState(button, label, enabled) {
+  if (enabled === true) {
+    button.textContent = label + "：ON";
+    button.classList.remove("sound-off");
+  } else {
+    button.textContent = label + "：OFF";
+    button.classList.add("sound-off");
+  }
+}
 
 function updateSoundButtons() {
-
-  if (bgmEnabled === true) {
-
-    bgmButton.textContent =
-      "BGM：ON";
-
-    bgmButton.classList.remove(
-      "sound-off"
-    );
-
-  } else {
-
-    bgmButton.textContent =
-      "BGM：OFF";
-
-    bgmButton.classList.add(
-      "sound-off"
-    );
-
-  }
-
-
-  if (seEnabled === true) {
-
-    seButton.textContent =
-      "SE：ON";
-
-    seButton.classList.remove(
-      "sound-off"
-    );
-
-  } else {
-
-    seButton.textContent =
-      "SE：OFF";
-
-    seButton.classList.add(
-      "sound-off"
-    );
-
-  }
-
+  setSoundButtonState(bgmButton, "BGM", bgmEnabled);
+  setSoundButtonState(titleBgmButton, "BGM", bgmEnabled);
+  setSoundButtonState(seButton, "SE", seEnabled);
+  setSoundButtonState(titleSeButton, "SE", seEnabled);
 }
-
 
 function toggleBgm() {
-
-  bgmEnabled =
-    !bgmEnabled;
-
+  bgmEnabled = !bgmEnabled;
 
   updateSoundButtons();
-
 
   if (bgmEnabled === true) {
-
     startBgm();
-
   } else {
-
     stopBgm();
-
   }
-
 }
-
 
 function toggleSe() {
-
-  seEnabled =
-    !seEnabled;
-
-
+  seEnabled = !seEnabled;
   updateSoundButtons();
-
 }
 
-
 function unlockAudioOnce() {
-
   if (audioStarted === true) {
     return;
   }
 
-
   audioStarted = true;
-
-
   startBgm();
-
 }
 
+
+/* ============================================================
+   「さがすモフ」のサイズ
+============================================================ */
+
+function setupTargetMofuSize() {
+  const targetWidth = targetMofuBaseWidth * targetMofuSizeScale;
+  targetMofu.style.width = targetWidth + "px";
+}
+
+
+/* ============================================================
+   画像読み込み
+============================================================ */
 
 function getAllImagePaths() {
+  const uniquePaths = new Set();
+  const modeKeys = Object.keys(gameModeSettings);
 
-  const uniquePaths =
-    new Set();
+  for (let i = 0; i < modeKeys.length; i++) {
+    const modeKey = modeKeys[i];
+    const images = gameModeSettings[modeKey].images;
 
-
-  const modeKeys =
-    Object.keys(
-      gameModeSettings
-    );
-
-
-  for (
-    let i = 0;
-    i < modeKeys.length;
-    i++
-  ) {
-
-    const modeKey =
-      modeKeys[i];
-
-
-    const images =
-      gameModeSettings[
-        modeKey
-      ].images;
-
-
-    for (
-      let j = 0;
-      j < images.length;
-      j++
-    ) {
-
-      uniquePaths.add(
-        images[j]
-      );
-
+    for (let j = 0; j < images.length; j++) {
+      uniquePaths.add(images[j]);
     }
-
   }
 
-
-  return Array.from(
-    uniquePaths
-  );
-
+  return Array.from(uniquePaths);
 }
 
-
 function preloadImages(callback) {
+  const allImagePaths = getAllImagePaths();
 
-  const allImagePaths =
-    getAllImagePaths();
-
-
-  if (
-    allImagePaths.length === 0
-  ) {
-
+  if (allImagePaths.length === 0) {
     callback();
-
     return;
-
   }
-
 
   let loadedCount = 0;
 
+  function finishOneImage() {
+    loadedCount = loadedCount + 1;
 
-  for (
-    let i = 0;
-    i < allImagePaths.length;
-    i++
-  ) {
-
-    const imagePath =
-      allImagePaths[i];
-
-
-    const image =
-      new Image();
-
-
-    image.onload =
-      function () {
-
-        imageSizeCache[
-          imagePath
-        ] = {
-
-          width:
-            image.naturalWidth,
-
-          height:
-            image.naturalHeight
-
-        };
-
-
-        loadedCount =
-          loadedCount + 1;
-
-
-        if (
-          loadedCount ===
-          allImagePaths.length
-        ) {
-
-          callback();
-
-        }
-
-      };
-
-
-    image.onerror =
-      function () {
-
-        imageSizeCache[
-          imagePath
-        ] = {
-
-          width: 100,
-          height: 150
-
-        };
-
-
-        loadedCount =
-          loadedCount + 1;
-
-
-        if (
-          loadedCount ===
-          allImagePaths.length
-        ) {
-
-          callback();
-
-        }
-
-      };
-
-
-    image.src =
-      imagePath;
-
+    if (loadedCount === allImagePaths.length) {
+      callback();
+    }
   }
 
+  for (let i = 0; i < allImagePaths.length; i++) {
+    const imagePath = allImagePaths[i];
+    const image = new Image();
+
+    image.onload = function () {
+      imageSizeCache[imagePath] = {
+        width: image.naturalWidth,
+        height: image.naturalHeight
+      };
+
+      finishOneImage();
+    };
+
+    image.onerror = function () {
+      imageSizeCache[imagePath] = {
+        width: 100,
+        height: 150
+      };
+
+      finishOneImage();
+    };
+
+    image.src = imagePath;
+  }
 }
 
+
+/* ============================================================
+   現在の難易度設定取得
+============================================================ */
 
 function getCurrentModeSettings() {
-
-  return gameModeSettings[
-    currentModeKey
-  ];
-
+  return gameModeSettings[currentModeKey];
 }
-
 
 function getCurrentImages() {
-
-  return getCurrentModeSettings()
-    .images;
-
+  return getCurrentModeSettings().images;
 }
-
 
 function getCurrentMofuSizeScale() {
+  const settings = getCurrentModeSettings();
 
-  const settings =
-    getCurrentModeSettings();
-
-
-  if (
-    typeof settings.mofuSizeScale ===
-    "number"
-  ) {
-
+  if (typeof settings.mofuSizeScale === "number") {
     return settings.mofuSizeScale;
-
   }
-
 
   return 1.0;
-
 }
-
 
 function getMaxLevel() {
-
-  return getCurrentModeSettings()
-    .stageMofuCounts
-    .length;
-
+  return getCurrentModeSettings().stageMofuCounts.length;
 }
 
+function getNumberOfMofusForLevel(level) {
+  const counts = getCurrentModeSettings().stageMofuCounts;
+  const index = level - 1;
 
-function getNumberOfMofusForLevel(
-  level
-) {
-
-  const counts =
-    getCurrentModeSettings()
-      .stageMofuCounts;
-
-
-  const index =
-    level - 1;
-
-
-  if (
-    index >= 0 &&
-    index < counts.length
-  ) {
-
+  if (index >= 0 && index < counts.length) {
     return counts[index];
-
   }
 
-
-  return counts[
-    counts.length - 1
-  ];
-
+  return counts[counts.length - 1];
 }
 
 
-function getRandomNumber(
-  min,
-  max
-) {
+/* ============================================================
+   乱数
+============================================================ */
 
-  return (
-    Math.random() *
-    (max - min) +
-    min
-  );
+function getRandomNumber(min, max) {
+  return Math.random() * (max - min) + min;
+}
 
+function getRandomInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 
-function getRandomInteger(
-  min,
-  max
-) {
-
-  return (
-    Math.floor(
-      Math.random() *
-      (max - min + 1)
-    ) +
-    min
-  );
-
-}
-
+/* ============================================================
+   テストモードのボタン
+============================================================ */
 
 function createTestModeButtons() {
-
-  testModeButtons.innerHTML =
-    "";
-
+  testModeButtons.innerHTML = "";
 
   const modeKeys = [
     "normal",
@@ -817,1136 +538,501 @@ function createTestModeButtons() {
     "superHard"
   ];
 
+  for (let i = 0; i < modeKeys.length; i++) {
+    const modeKey = modeKeys[i];
+    const button = document.createElement("button");
 
-  for (
-    let i = 0;
-    i < modeKeys.length;
-    i++
-  ) {
+    button.textContent = gameModeSettings[modeKey].label;
+    button.className = "test-mode-button";
+    button.dataset.modeKey = modeKey;
 
-    const modeKey =
-      modeKeys[i];
+    button.addEventListener("click", function () {
+      unlockAudioOnce();
+      playUiClickSe();
+      startTestDifficulty(modeKey);
+    });
 
-
-    const button =
-      document.createElement(
-        "button"
-      );
-
-
-    button.textContent =
-      gameModeSettings[
-        modeKey
-      ].label;
-
-
-    button.className =
-      "test-mode-button";
-
-
-    button.dataset.modeKey =
-      modeKey;
-
-
-    button.addEventListener(
-      "click",
-      function () {
-
-        unlockAudioOnce();
-
-
-        startTestDifficulty(
-          modeKey
-        );
-
-      }
-    );
-
-
-    testModeButtons.appendChild(
-      button
-    );
-
+    testModeButtons.appendChild(button);
   }
-
 
   updateActiveTestModeButton();
-
 }
-
 
 function updateActiveTestModeButton() {
+  const buttons = document.querySelectorAll(".test-mode-button");
 
-  const buttons =
-    document.querySelectorAll(
-      ".test-mode-button"
-    );
+  for (let i = 0; i < buttons.length; i++) {
+    const button = buttons[i];
 
-
-  for (
-    let i = 0;
-    i < buttons.length;
-    i++
-  ) {
-
-    const button =
-      buttons[i];
-
-
-    if (
-      button.dataset.modeKey ===
-      currentModeKey
-    ) {
-
-      button.classList.add(
-        "active"
-      );
-
+    if (button.dataset.modeKey === currentModeKey) {
+      button.classList.add("active");
     } else {
-
-      button.classList.remove(
-        "active"
-      );
-
+      button.classList.remove("active");
     }
-
   }
-
 }
 
-
 function createLevelButtons() {
-
-  levelButtons.innerHTML =
-    "";
-
+  levelButtons.innerHTML = "";
 
   if (isTestMode === false) {
     return;
   }
 
+  const maxLevel = getMaxLevel();
 
-  const maxLevel =
-    getMaxLevel();
+  for (let level = 1; level <= maxLevel; level++) {
+    const button = document.createElement("button");
 
+    button.textContent = String(level);
+    button.className = "level-button";
+    button.dataset.level = String(level);
 
-  for (
-    let level = 1;
-    level <= maxLevel;
-    level++
-  ) {
+    button.addEventListener("click", function () {
+      unlockAudioOnce();
+      playUiClickSe();
+      startTestLevel(level);
+    });
 
-    const button =
-      document.createElement(
-        "button"
-      );
-
-
-    button.textContent =
-      String(level);
-
-
-    button.className =
-      "level-button";
-
-
-    button.dataset.level =
-      String(level);
-
-
-    button.addEventListener(
-      "click",
-      function () {
-
-        unlockAudioOnce();
-
-
-        startTestLevel(
-          level
-        );
-
-      }
-    );
-
-
-    levelButtons.appendChild(
-      button
-    );
-
+    levelButtons.appendChild(button);
   }
-
 
   updateActiveLevelButton();
-
 }
-
 
 function updateActiveLevelButton() {
+  const buttons = document.querySelectorAll(".level-button");
 
-  const buttons =
-    document.querySelectorAll(
-      ".level-button"
-    );
+  for (let i = 0; i < buttons.length; i++) {
+    const button = buttons[i];
+    const buttonLevel = parseInt(button.dataset.level, 10);
 
-
-  for (
-    let i = 0;
-    i < buttons.length;
-    i++
-  ) {
-
-    const button =
-      buttons[i];
-
-
-    const buttonLevel =
-      parseInt(
-        button.dataset.level,
-        10
-      );
-
-
-    if (
-      buttonLevel ===
-      currentLevel
-    ) {
-
-      button.classList.add(
-        "active"
-      );
-
+    if (buttonLevel === currentLevel) {
+      button.classList.add("active");
     } else {
-
-      button.classList.remove(
-        "active"
-      );
-
+      button.classList.remove("active");
     }
-
   }
-
 }
 
+
+/* ============================================================
+   タイマー類クリア
+============================================================ */
 
 function clearGameplayTimers() {
-
   if (messageTimer !== null) {
-
-    clearTimeout(
-      messageTimer
-    );
-
-
-    messageTimer =
-      null;
-
+    clearTimeout(messageTimer);
+    messageTimer = null;
   }
-
 
   if (nextLevelTimer !== null) {
-
-    clearTimeout(
-      nextLevelTimer
-    );
-
-
-    nextLevelTimer =
-      null;
-
+    clearTimeout(nextLevelTimer);
+    nextLevelTimer = null;
   }
 
-
   clearAnswerAnimationTimers();
-
 }
 
 
+/* ============================================================
+   タイトル画面のランダムモフ
+============================================================ */
+
 function createTitleMofus() {
+  titleMofuArea.innerHTML = "";
 
-  titleMofuArea.innerHTML =
-    "";
-
-
-  const images =
-    getAllImagePaths();
-
+  const images = getAllImagePaths();
 
   if (images.length === 0) {
     return;
   }
 
+  const areaWidth = titleMofuArea.clientWidth;
+  const areaHeight = titleMofuArea.clientHeight;
 
-  const areaWidth =
-    titleMofuArea.clientWidth;
-
-
-  const areaHeight =
-    titleMofuArea.clientHeight;
-
-
-  if (
-    areaWidth <= 0 ||
-    areaHeight <= 0
-  ) {
-
+  if (areaWidth <= 0 || areaHeight <= 0) {
     return;
-
   }
 
+  for (let i = 0; i < titleMofuCount; i++) {
+    const imageIndex = getRandomInteger(0, images.length - 1);
+    const imagePath = images[imageIndex];
+    const mofu = document.createElement("img");
 
-  for (
-    let i = 0;
-    i < titleMofuCount;
-    i++
-  ) {
-
-    const imageIndex =
-      getRandomInteger(
-        0,
-        images.length - 1
-      );
-
-
-    const imagePath =
-      images[
-        imageIndex
-      ];
-
-
-    const mofu =
-      document.createElement(
-        "img"
-      );
-
-
-    /*
-      元のランダムサイズを決めてから
-      タイトル画面専用倍率をかけます。
-    */
-    const baseWidth =
-      getRandomInteger(
-        titleMofuMinWidth,
-        titleMofuMaxWidth
-      );
-
-
-    const width =
-      Math.round(
-        baseWidth *
-        titleMofuSizeScale
-      );
-
-
-    const height =
-      getMofuHeight(
-        imagePath,
-        width
-      );
-
-
-    const maxLeft =
-      Math.max(
-        0,
-        Math.floor(
-          areaWidth - width
-        )
-      );
-
-
-    const maxTop =
-      Math.max(
-        0,
-        Math.floor(
-          areaHeight - height
-        )
-      );
-
-
-    const left =
-      getRandomInteger(
-        0,
-        maxLeft
-      );
-
-
-    const top =
-      getRandomInteger(
-        0,
-        maxTop
-      );
-
-
-    const rotation =
-      getRandomNumber(
-        0,
-        360
-      );
-
-
-    mofu.src =
-      imagePath;
-
-
-    mofu.alt =
-      "";
-
-
-    mofu.className =
-      "title-mofu";
-
-
-    mofu.style.width =
-      width + "px";
-
-
-    mofu.style.left =
-      left + "px";
-
-
-    mofu.style.top =
-      top + "px";
-
-
-    mofu.style.transform =
-      "rotate(" +
-      rotation +
-      "deg)";
-
-
-    titleMofuArea.appendChild(
-      mofu
+    const baseWidth = getRandomInteger(
+      titleMofuMinWidth,
+      titleMofuMaxWidth
     );
 
-  }
+    const width = Math.round(
+      baseWidth * titleMofuSizeScale
+    );
 
+    const height = getMofuHeight(imagePath, width);
+
+    const maxLeft = Math.max(
+      0,
+      Math.floor(areaWidth - width)
+    );
+
+    const maxTop = Math.max(
+      0,
+      Math.floor(areaHeight - height)
+    );
+
+    const left = getRandomInteger(0, maxLeft);
+    const top = getRandomInteger(0, maxTop);
+    const rotation = getRandomNumber(0, 360);
+
+    mofu.src = imagePath;
+    mofu.alt = "";
+    mofu.className = "title-mofu";
+    mofu.style.width = width + "px";
+    mofu.style.left = left + "px";
+    mofu.style.top = top + "px";
+    mofu.style.transform = "rotate(" + rotation + "deg)";
+
+    titleMofuArea.appendChild(mofu);
+  }
 }
 
+
+/* ============================================================
+   画面切り替え
+============================================================ */
 
 function showTitleScreen() {
-
   clearGameplayTimers();
-
-
   stopGameTimer();
-
-
   clearGameScreen();
 
+  playScreen.hidden = true;
+  titleScreen.hidden = false;
 
-  playScreen.hidden =
-    true;
+  updateSoundButtons();
 
-
-  titleScreen.hidden =
-    false;
-
-
-  requestAnimationFrame(
-    function () {
-
-      createTitleMofus();
-
-    }
-  );
-
+  requestAnimationFrame(function () {
+    createTitleMofus();
+  });
 }
 
+function startMainMode(modeKey) {
+  currentModeKey = modeKey;
+  isTestMode = false;
+  currentLevel = 1;
+  previousTargetImage = "";
 
-function startMainMode(
-  modeKey
-) {
-
-  currentModeKey =
-    modeKey;
-
-
-  isTestMode =
-    false;
-
-
-  currentLevel =
-    1;
-
-
-  previousTargetImage =
-    "";
-
-
-  testControls.hidden =
-    true;
-
-
-  titleScreen.hidden =
-    true;
-
-
-  playScreen.hidden =
-    false;
-
+  testControls.hidden = true;
+  titleScreen.hidden = true;
+  playScreen.hidden = false;
 
   clearGameplayTimers();
-
-
   resetGameTimer();
-
-
   createLevelButtons();
-
-
   createGame();
-
-
   startGameTimer();
-
 }
-
 
 function startTestMode() {
+  currentModeKey = "normal";
+  isTestMode = true;
+  currentLevel = 1;
+  previousTargetImage = "";
 
-  currentModeKey =
-    "normal";
-
-
-  isTestMode =
-    true;
-
-
-  currentLevel =
-    1;
-
-
-  previousTargetImage =
-    "";
-
-
-  titleScreen.hidden =
-    true;
-
-
-  playScreen.hidden =
-    false;
-
-
-  testControls.hidden =
-    false;
-
+  titleScreen.hidden = true;
+  playScreen.hidden = false;
+  testControls.hidden = false;
 
   clearGameplayTimers();
-
-
   resetGameTimer();
-
-
   createTestModeButtons();
-
-
   createLevelButtons();
-
-
   createGame();
-
-
   startGameTimer();
-
 }
 
-
-function startTestDifficulty(
-  modeKey
-) {
-
-  currentModeKey =
-    modeKey;
-
-
-  currentLevel =
-    1;
-
-
-  previousTargetImage =
-    "";
-
+function startTestDifficulty(modeKey) {
+  currentModeKey = modeKey;
+  currentLevel = 1;
+  previousTargetImage = "";
 
   clearGameplayTimers();
-
-
   resetGameTimer();
-
-
   createTestModeButtons();
-
-
   createLevelButtons();
-
-
   createGame();
-
-
   startGameTimer();
-
 }
 
-
-function startTestLevel(
-  level
-) {
-
-  currentLevel =
-    level;
-
-
-  previousTargetImage =
-    "";
-
+function startTestLevel(level) {
+  currentLevel = level;
+  previousTargetImage = "";
 
   clearGameplayTimers();
-
-
   resetGameTimer();
-
-
   updateActiveLevelButton();
-
-
   createGame();
-
-
   startGameTimer();
-
 }
 
-
-function handleTitleModeButtonClick(
-  event
-) {
-
+function handleTitleModeButtonClick(event) {
   unlockAudioOnce();
+  playUiClickSe();
 
+  const selectedMode = event.currentTarget.dataset.startMode;
 
-  const selectedMode =
-    event.currentTarget
-      .dataset.startMode;
-
-
-  if (
-    selectedMode ===
-    "test"
-  ) {
-
+  if (selectedMode === "test") {
     startTestMode();
-
-
     return;
-
   }
 
-
-  if (
-    gameModeSettings[
-      selectedMode
-    ]
-  ) {
-
-    startMainMode(
-      selectedMode
-    );
-
+  if (gameModeSettings[selectedMode]) {
+    startMainMode(selectedMode);
   }
-
 }
 
 
-function formatSeconds(
-  milliseconds
-) {
+/* ============================================================
+   タイマー
+============================================================ */
 
-  return (
-    milliseconds /
-    1000
-  ).toFixed(1);
-
+function formatSeconds(milliseconds) {
+  return (milliseconds / 1000).toFixed(1);
 }
-
 
 function getCurrentElapsedTimeMs() {
-
-  if (
-    timerRunning === true
-  ) {
-
-    return (
-      elapsedTimeMs +
-      (
-        performance.now() -
-        timerStartTime
-      )
-    );
-
+  if (timerRunning === true) {
+    return elapsedTimeMs + (performance.now() - timerStartTime);
   }
 
-
   return elapsedTimeMs;
-
 }
 
-
 function updateTimerDisplay() {
-
-  const currentMilliseconds =
-    getCurrentElapsedTimeMs();
-
+  const currentMilliseconds = getCurrentElapsedTimeMs();
 
   timeText.textContent =
     "タイム：" +
-    formatSeconds(
-      currentMilliseconds
-    ) +
+    formatSeconds(currentMilliseconds) +
     "秒";
-
 }
-
 
 function updateAnswerUsedStyle() {
-
-  if (
-    answerUsedInRun === true
-  ) {
-
-    timeText.classList.add(
-      "answer-used"
-    );
-
-
-    clearTimeText.classList.add(
-      "answer-used"
-    );
-
+  if (answerUsedInRun === true) {
+    timeText.classList.add("answer-used");
+    clearTimeText.classList.add("answer-used");
   } else {
-
-    timeText.classList.remove(
-      "answer-used"
-    );
-
-
-    clearTimeText.classList.remove(
-      "answer-used"
-    );
-
+    timeText.classList.remove("answer-used");
+    clearTimeText.classList.remove("answer-used");
   }
-
 }
-
 
 function resetGameTimer() {
-
-  if (
-    timerInterval !== null
-  ) {
-
-    clearInterval(
-      timerInterval
-    );
-
-
-    timerInterval =
-      null;
-
+  if (timerInterval !== null) {
+    clearInterval(timerInterval);
+    timerInterval = null;
   }
 
+  timerStartTime = 0;
+  elapsedTimeMs = 0;
+  timerRunning = false;
+  answerUsedInRun = false;
 
-  timerStartTime =
-    0;
-
-
-  elapsedTimeMs =
-    0;
-
-
-  timerRunning =
-    false;
-
-
-  answerUsedInRun =
-    false;
-
-
-  timeText.textContent =
-    "タイム：0.0秒";
-
-
-  clearTimeText.textContent =
-    "";
-
+  timeText.textContent = "タイム：0.0秒";
+  clearTimeText.textContent = "";
 
   updateAnswerUsedStyle();
-
 }
-
 
 function startGameTimer() {
-
-  if (
-    timerRunning === true
-  ) {
-
+  if (timerRunning === true) {
     return;
-
   }
 
+  timerStartTime = performance.now();
+  timerRunning = true;
 
-  timerStartTime =
-    performance.now();
-
-
-  timerRunning =
-    true;
-
-
-  if (
-    timerInterval !== null
-  ) {
-
-    clearInterval(
-      timerInterval
-    );
-
+  if (timerInterval !== null) {
+    clearInterval(timerInterval);
   }
 
-
-  timerInterval =
-    setInterval(
-      function () {
-
-        updateTimerDisplay();
-
-      },
-      50
-    );
-
+  timerInterval = setInterval(function () {
+    updateTimerDisplay();
+  }, 50);
 }
-
 
 function stopGameTimer() {
-
-  if (
-    timerRunning === true
-  ) {
-
+  if (timerRunning === true) {
     elapsedTimeMs =
       elapsedTimeMs +
-      (
-        performance.now() -
-        timerStartTime
-      );
+      (performance.now() - timerStartTime);
 
-
-    timerRunning =
-      false;
-
+    timerRunning = false;
   }
 
-
-  if (
-    timerInterval !== null
-  ) {
-
-    clearInterval(
-      timerInterval
-    );
-
-
-    timerInterval =
-      null;
-
+  if (timerInterval !== null) {
+    clearInterval(timerInterval);
+    timerInterval = null;
   }
-
 
   updateTimerDisplay();
-
 }
-
 
 function markAnswerUsed() {
-
-  answerUsedInRun =
-    true;
-
-
+  answerUsedInRun = true;
   updateAnswerUsedStyle();
-
 }
 
-
 function showClearTime() {
-
-  const seconds =
-    formatSeconds(
-      getCurrentElapsedTimeMs()
-    );
-
+  const seconds = formatSeconds(
+    getCurrentElapsedTimeMs()
+  );
 
   clearTimeText.textContent =
     "クリアタイム：" +
     seconds +
     "秒";
 
-
   updateAnswerUsedStyle();
-
 }
 
+
+/* ============================================================
+   ランダム画像
+============================================================ */
 
 function getRandomImage() {
+  const images = getCurrentImages();
+  const randomIndex = Math.floor(
+    Math.random() * images.length
+  );
 
-  const images =
-    getCurrentImages();
-
-
-  const randomIndex =
-    Math.floor(
-      Math.random() *
-      images.length
-    );
-
-
-  return images[
-    randomIndex
-  ];
-
+  return images[randomIndex];
 }
-
 
 function getRandomTargetImage() {
+  const images = getCurrentImages();
 
-  const images =
-    getCurrentImages();
-
-
-  if (
-    images.length <= 1
-  ) {
-
-    previousTargetImage =
-      images[0];
-
-
+  if (images.length <= 1) {
+    previousTargetImage = images[0];
     return images[0];
-
   }
 
+  let selectedImage = getRandomImage();
 
-  let selectedImage =
-    getRandomImage();
-
-
-  while (
-    selectedImage ===
-    previousTargetImage
-  ) {
-
-    selectedImage =
-      getRandomImage();
-
+  while (selectedImage === previousTargetImage) {
+    selectedImage = getRandomImage();
   }
 
-
-  previousTargetImage =
-    selectedImage;
-
-
+  previousTargetImage = selectedImage;
   return selectedImage;
-
 }
 
 
+/* ============================================================
+   モフサイズ
+============================================================ */
+
 function getGameScale() {
+  const gameScreenWidth = gameScreen.clientWidth;
 
-  const gameScreenWidth =
-    gameScreen.clientWidth;
-
-
-  if (
-    gameScreenWidth <= 0
-  ) {
-
+  if (gameScreenWidth <= 0) {
     return 1;
-
   }
-
 
   return Math.min(
     1,
-    gameScreenWidth /
-    referenceGameWidth
+    gameScreenWidth / referenceGameWidth
   );
-
 }
 
-
 function getBaseMofuWidth() {
-
-  const screenScale =
-    getGameScale();
-
-
-  const modeScale =
-    getCurrentMofuSizeScale();
-
+  const screenScale = getGameScale();
+  const modeScale = getCurrentMofuSizeScale();
 
   const baseWidth =
     defaultMofuWidthAtReference *
     screenScale;
 
-
   return Math.round(
-    baseWidth *
-    modeScale
+    baseWidth * modeScale
   );
-
 }
-
 
 function getMofuWidth() {
+  const screenScale = getGameScale();
+  const modeScale = getCurrentMofuSizeScale();
 
-  const screenScale =
-    getGameScale();
+  if (useRandomSize === true) {
+    const minWidth = Math.max(
+      24,
+      Math.round(
+        minMofuWidthAtReference *
+        screenScale
+      )
+    );
 
+    const maxWidth = Math.max(
+      minWidth,
+      Math.round(
+        maxMofuWidthAtReference *
+        screenScale
+      )
+    );
 
-  const modeScale =
-    getCurrentMofuSizeScale();
-
-
-  if (
-    useRandomSize === true
-  ) {
-
-    const minWidth =
-      Math.max(
-        24,
-        Math.round(
-          minMofuWidthAtReference *
-          screenScale
-        )
-      );
-
-
-    const maxWidth =
-      Math.max(
-        minWidth,
-        Math.round(
-          maxMofuWidthAtReference *
-          screenScale
-        )
-      );
-
-
-    const baseRandomWidth =
-      getRandomInteger(
-        minWidth,
-        maxWidth
-      );
-
+    const baseRandomWidth = getRandomInteger(
+      minWidth,
+      maxWidth
+    );
 
     return Math.round(
-      baseRandomWidth *
-      modeScale
+      baseRandomWidth * modeScale
     );
-
   }
-
 
   return getBaseMofuWidth();
-
 }
 
+function getMofuHeight(imagePath, displayWidth) {
+  const imageSize = imageSizeCache[imagePath];
 
-function getMofuHeight(
-  imagePath,
-  displayWidth
-) {
-
-  const imageSize =
-    imageSizeCache[
-      imagePath
-    ];
-
-
-  if (
-    !imageSize ||
-    imageSize.width === 0
-  ) {
-
-    return (
-      displayWidth *
-      1.5
-    );
-
+  if (!imageSize || imageSize.width === 0) {
+    return displayWidth * 1.5;
   }
 
-
-  return (
-    displayWidth *
-    (
-      imageSize.height /
-      imageSize.width
-    )
+  return displayWidth * (
+    imageSize.height /
+    imageSize.width
   );
-
 }
-
 
 function getMofuRotation() {
-
-  if (
-    useRandomRotation === true
-  ) {
-
-    return getRandomNumber(
-      0,
-      360
-    );
-
+  if (useRandomRotation === true) {
+    return getRandomNumber(0, 360);
   }
 
-
   return 0;
-
 }
 
+
+/* ============================================================
+   ゲーム画面内モフ操作
+============================================================ */
 
 function clearGameScreen() {
-
-  gameScreen.innerHTML =
-    "";
-
+  gameScreen.innerHTML = "";
 }
 
-
-function bringToFront(
-  mofuElement
-) {
-
-  topZIndex =
-    topZIndex + 1;
-
-
-  mofuElement.style.zIndex =
-    topZIndex;
-
+function bringToFront(mofuElement) {
+  topZIndex = topZIndex + 1;
+  mofuElement.style.zIndex = topZIndex;
 }
 
-
-function setMofuTransform(
-  mofuElement,
-  scale
-) {
-
-  const rotation =
-    parseFloat(
-      mofuElement.dataset.rotation ||
-      "0"
-    );
-
+function setMofuTransform(mofuElement, scale) {
+  const rotation = parseFloat(
+    mofuElement.dataset.rotation || "0"
+  );
 
   mofuElement.style.transform =
     "rotate(" +
@@ -1954,499 +1040,240 @@ function setMofuTransform(
     "deg) scale(" +
     scale +
     ")";
-
 }
 
+
+/* ============================================================
+   答えアニメーション
+============================================================ */
 
 function clearAnswerAnimationTimers() {
-
-  if (
-    answerAnimationTimer1 !== null
-  ) {
-
-    clearTimeout(
-      answerAnimationTimer1
-    );
-
-
-    answerAnimationTimer1 =
-      null;
-
+  if (answerAnimationTimer1 !== null) {
+    clearTimeout(answerAnimationTimer1);
+    answerAnimationTimer1 = null;
   }
 
-
-  if (
-    answerAnimationTimer2 !== null
-  ) {
-
-    clearTimeout(
-      answerAnimationTimer2
-    );
-
-
-    answerAnimationTimer2 =
-      null;
-
+  if (answerAnimationTimer2 !== null) {
+    clearTimeout(answerAnimationTimer2);
+    answerAnimationTimer2 = null;
   }
 
-
-  if (
-    answerAnimationTimer3 !== null
-  ) {
-
-    clearTimeout(
-      answerAnimationTimer3
-    );
-
-
-    answerAnimationTimer3 =
-      null;
-
+  if (answerAnimationTimer3 !== null) {
+    clearTimeout(answerAnimationTimer3);
+    answerAnimationTimer3 = null;
   }
-
 }
 
-
-function animateAnswerMofu(
-  mofuElement
-) {
-
+function animateAnswerMofu(mofuElement) {
   clearAnswerAnimationTimers();
-
 
   setMofuTransform(
     mofuElement,
     answerScaleLarge
   );
 
-
-  answerAnimationTimer1 =
-    setTimeout(
-      function () {
-
-        setMofuTransform(
-          mofuElement,
-          answerScaleSmall
-        );
-
-      },
-      answerAnimationSpeed
+  answerAnimationTimer1 = setTimeout(function () {
+    setMofuTransform(
+      mofuElement,
+      answerScaleSmall
     );
+  }, answerAnimationSpeed);
 
-
-  answerAnimationTimer2 =
-    setTimeout(
-      function () {
-
-        setMofuTransform(
-          mofuElement,
-          answerScaleLarge
-        );
-
-      },
-      answerAnimationSpeed * 2
+  answerAnimationTimer2 = setTimeout(function () {
+    setMofuTransform(
+      mofuElement,
+      answerScaleLarge
     );
+  }, answerAnimationSpeed * 2);
 
-
-  answerAnimationTimer3 =
-    setTimeout(
-      function () {
-
-        setMofuTransform(
-          mofuElement,
-          1
-        );
-
-      },
-      answerAnimationSpeed * 3
+  answerAnimationTimer3 = setTimeout(function () {
+    setMofuTransform(
+      mofuElement,
+      1
     );
-
+  }, answerAnimationSpeed * 3);
 }
 
+
+/* ============================================================
+   メッセージ
+============================================================ */
 
 function showWrongMessage() {
+  message.textContent = "ちがう！";
 
-  message.textContent =
-    "ちがう！";
-
-
-  if (
-    messageTimer !== null
-  ) {
-
-    clearTimeout(
-      messageTimer
-    );
-
+  if (messageTimer !== null) {
+    clearTimeout(messageTimer);
   }
 
-
-  messageTimer =
-    setTimeout(
-      function () {
-
-        message.textContent =
-          "同じモフをタップしてね";
-
-
-        messageTimer =
-          null;
-
-      },
-      1000
-    );
-
+  messageTimer = setTimeout(function () {
+    message.textContent = "同じモフをタップしてね";
+    messageTimer = null;
+  }, 1000);
 }
-
 
 function showNextLevelMessage() {
-
-  if (
-    currentLevel <
-    getMaxLevel()
-  ) {
-
-    message.textContent =
-      "正解！ 次のステージへ";
-
+  if (currentLevel < getMaxLevel()) {
+    message.textContent = "正解！ 次のステージへ";
   } else {
-
-    message.textContent =
-      "全ステージクリア！";
-
+    message.textContent = "全ステージクリア！";
   }
-
 }
-
 
 function showAnswerMessage() {
-
-  if (
-    messageTimer !== null
-  ) {
-
-    clearTimeout(
-      messageTimer
-    );
-
-
-    messageTimer =
-      null;
-
+  if (messageTimer !== null) {
+    clearTimeout(messageTimer);
+    messageTimer = null;
   }
 
-
-  message.textContent =
-    "これが正解！";
-
+  message.textContent = "これが正解！";
 }
-
 
 function goToNextLevel() {
-
-  if (
-    currentLevel <
-    getMaxLevel()
-  ) {
-
-    playSe(
-      "nextLevel"
-    );
-
-
-    currentLevel =
-      currentLevel + 1;
-
-
+  if (currentLevel < getMaxLevel()) {
+    playSe("nextLevel");
+    currentLevel = currentLevel + 1;
     createGame();
-
   } else {
-
     stopGameTimer();
-
-
-    playSe(
-      "clear"
-    );
-
-
-    message.textContent =
-      "全ステージクリア！";
-
-
+    playSe("clear");
+    message.textContent = "全ステージクリア！";
     showClearTime();
-
   }
-
 }
 
 
-function shuffleArray(
-  array
-) {
+/* ============================================================
+   配置
+============================================================ */
 
-  for (
-    let i = array.length - 1;
-    i > 0;
-    i--
-  ) {
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(
+      Math.random() * (i + 1)
+    );
 
-    const randomIndex =
-      Math.floor(
-        Math.random() *
-        (i + 1)
-      );
-
-
-    const temporaryValue =
-      array[i];
-
-
-    array[i] =
-      array[
-        randomIndex
-      ];
-
-
-    array[
-      randomIndex
-    ] =
-      temporaryValue;
-
+    const temporaryValue = array[i];
+    array[i] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
   }
-
 
   return array;
-
 }
 
+function createEvenPositions(numberOfMofus) {
+  evenPositions = [];
+  evenPositionIndex = 0;
 
-function createEvenPositions(
-  numberOfMofus
-) {
+  const gameScreenWidth = gameScreen.clientWidth;
+  const gameScreenHeight = gameScreen.clientHeight;
 
-  evenPositions =
-    [];
+  const columns = Math.ceil(
+    Math.sqrt(
+      numberOfMofus *
+      gameScreenWidth /
+      gameScreenHeight
+    )
+  );
 
-
-  evenPositionIndex =
-    0;
-
-
-  const gameScreenWidth =
-    gameScreen.clientWidth;
-
-
-  const gameScreenHeight =
-    gameScreen.clientHeight;
-
-
-  const columns =
-    Math.ceil(
-      Math.sqrt(
-        numberOfMofus *
-        gameScreenWidth /
-        gameScreenHeight
-      )
-    );
-
-
-  const rows =
-    Math.ceil(
-      numberOfMofus /
-      columns
-    );
-
+  const rows = Math.ceil(
+    numberOfMofus /
+    columns
+  );
 
   const usableWidth =
     gameScreenWidth -
     edgeMargin * 2;
 
-
   const usableHeight =
     gameScreenHeight -
     edgeMargin * 2;
-
 
   const cellWidth =
     usableWidth /
     columns;
 
-
   const cellHeight =
     usableHeight /
     rows;
 
-
-  for (
-    let row = 0;
-    row < rows;
-    row++
-  ) {
-
-    for (
-      let column = 0;
-      column < columns;
-      column++
-    ) {
-
+  for (let row = 0; row < rows; row++) {
+    for (let column = 0; column < columns; column++) {
       const centerX =
         edgeMargin +
-        cellWidth *
-        column +
+        cellWidth * column +
         cellWidth / 2;
-
 
       const centerY =
         edgeMargin +
-        cellHeight *
-        row +
+        cellHeight * row +
         cellHeight / 2;
 
+      const jitterX = getRandomNumber(
+        -cellWidth * positionJitterRate,
+        cellWidth * positionJitterRate
+      );
 
-      const jitterX =
-        getRandomNumber(
-          -cellWidth *
-          positionJitterRate,
-
-          cellWidth *
-          positionJitterRate
-        );
-
-
-      const jitterY =
-        getRandomNumber(
-          -cellHeight *
-          positionJitterRate,
-
-          cellHeight *
-          positionJitterRate
-        );
-
+      const jitterY = getRandomNumber(
+        -cellHeight * positionJitterRate,
+        cellHeight * positionJitterRate
+      );
 
       evenPositions.push({
-
-        x:
-          centerX +
-          jitterX,
-
-        y:
-          centerY +
-          jitterY
-
+        x: centerX + jitterX,
+        y: centerY + jitterY
       });
-
     }
-
   }
 
+  shuffleArray(evenPositions);
+}
 
-  shuffleArray(
-    evenPositions
+function getRandomPosition(width, height) {
+  const gameScreenWidth = gameScreen.clientWidth;
+  const gameScreenHeight = gameScreen.clientHeight;
+
+  const maxLeft = Math.max(
+    edgeMargin,
+    gameScreenWidth -
+    width -
+    edgeMargin
   );
 
-}
-
-
-function getRandomPosition(
-  width,
-  height
-) {
-
-  const gameScreenWidth =
-    gameScreen.clientWidth;
-
-
-  const gameScreenHeight =
-    gameScreen.clientHeight;
-
-
-  const maxLeft =
-    Math.max(
-      edgeMargin,
-      gameScreenWidth -
-      width -
-      edgeMargin
-    );
-
-
-  const maxTop =
-    Math.max(
-      edgeMargin,
-      gameScreenHeight -
-      height -
-      edgeMargin
-    );
-
+  const maxTop = Math.max(
+    edgeMargin,
+    gameScreenHeight -
+    height -
+    edgeMargin
+  );
 
   return {
+    left: getRandomInteger(
+      edgeMargin,
+      Math.floor(maxLeft)
+    ),
 
-    left:
-      getRandomInteger(
-        edgeMargin,
-        Math.floor(
-          maxLeft
-        )
-      ),
-
-    top:
-      getRandomInteger(
-        edgeMargin,
-        Math.floor(
-          maxTop
-        )
-      )
-
+    top: getRandomInteger(
+      edgeMargin,
+      Math.floor(maxTop)
+    )
   };
-
 }
 
+function getPositionFromCenter(center, width, height) {
+  const gameScreenWidth = gameScreen.clientWidth;
+  const gameScreenHeight = gameScreen.clientHeight;
 
-function getPositionFromCenter(
-  center,
-  width,
-  height
-) {
+  let left = center.x - width / 2;
+  let top = center.y - height / 2;
 
-  const gameScreenWidth =
-    gameScreen.clientWidth;
-
-
-  const gameScreenHeight =
-    gameScreen.clientHeight;
-
-
-  let left =
-    center.x -
-    width / 2;
-
-
-  let top =
-    center.y -
-    height / 2;
-
-
-  if (
-    left <
-    edgeMargin
-  ) {
-
-    left =
-      edgeMargin;
-
+  if (left < edgeMargin) {
+    left = edgeMargin;
   }
 
-
-  if (
-    top <
-    edgeMargin
-  ) {
-
-    top =
-      edgeMargin;
-
+  if (top < edgeMargin) {
+    top = edgeMargin;
   }
-
 
   if (
     left >
@@ -2454,14 +1281,11 @@ function getPositionFromCenter(
     width -
     edgeMargin
   ) {
-
     left =
       gameScreenWidth -
       width -
       edgeMargin;
-
   }
-
 
   if (
     top >
@@ -2469,87 +1293,43 @@ function getPositionFromCenter(
     height -
     edgeMargin
   ) {
-
     top =
       gameScreenHeight -
       height -
       edgeMargin;
-
   }
 
-
-  if (
-    left <
-    edgeMargin
-  ) {
-
-    left =
-      edgeMargin;
-
+  if (left < edgeMargin) {
+    left = edgeMargin;
   }
 
-
-  if (
-    top <
-    edgeMargin
-  ) {
-
-    top =
-      edgeMargin;
-
+  if (top < edgeMargin) {
+    top = edgeMargin;
   }
-
 
   return {
-
-    left:
-      left,
-
-    top:
-      top
-
+    left: left,
+    top: top
   };
-
 }
 
-
-function getPositionForMofu(
-  width,
-  height
-) {
-
+function getPositionForMofu(width, height) {
   if (
     useEvenPlacement === true &&
-    evenPositionIndex <
-    evenPositions.length
+    evenPositionIndex < evenPositions.length
   ) {
-
-    const center =
-      evenPositions[
-        evenPositionIndex
-      ];
-
-
-    evenPositionIndex =
-      evenPositionIndex + 1;
-
+    const center = evenPositions[evenPositionIndex];
+    evenPositionIndex = evenPositionIndex + 1;
 
     return getPositionFromCenter(
       center,
       width,
       height
     );
-
   }
 
-
-  return getRandomPosition(
-    width,
-    height
-  );
-
+  return getRandomPosition(width, height);
 }
-
 
 function saveResponsivePlacementData(
   mofu,
@@ -2557,123 +1337,54 @@ function saveResponsivePlacementData(
   top,
   width
 ) {
+  const screenWidth = gameScreen.clientWidth;
+  const screenHeight = gameScreen.clientHeight;
 
-  const screenWidth =
-    gameScreen.clientWidth;
-
-
-  const screenHeight =
-    gameScreen.clientHeight;
-
-
-  if (
-    screenWidth <= 0 ||
-    screenHeight <= 0
-  ) {
-
+  if (screenWidth <= 0 || screenHeight <= 0) {
     return;
-
   }
 
+  mofu.dataset.leftRate = String(
+    left / screenWidth
+  );
 
-  mofu.dataset.leftRate =
-    String(
-      left /
-      screenWidth
-    );
+  mofu.dataset.topRate = String(
+    top / screenHeight
+  );
 
-
-  mofu.dataset.topRate =
-    String(
-      top /
-      screenHeight
-    );
-
-
-  mofu.dataset.widthRate =
-    String(
-      width /
-      screenWidth
-    );
-
+  mofu.dataset.widthRate = String(
+    width / screenWidth
+  );
 }
 
+function createMofu(imagePath, isCorrect) {
+  const mofu = document.createElement("img");
 
-function createMofu(
-  imagePath,
-  isCorrect
-) {
+  const mofuWidth = getMofuWidth();
+  const mofuHeight = getMofuHeight(
+    imagePath,
+    mofuWidth
+  );
 
-  const mofu =
-    document.createElement(
-      "img"
-    );
+  const rotation = getMofuRotation();
 
+  const position = getPositionForMofu(
+    mofuWidth,
+    mofuHeight
+  );
 
-  const mofuWidth =
-    getMofuWidth();
+  mofu.src = imagePath;
+  mofu.alt = "モフ";
+  mofu.className = "mofu-item";
 
+  mofu.style.zIndex = 1;
+  mofu.style.width = mofuWidth + "px";
+  mofu.style.left = position.left + "px";
+  mofu.style.top = position.top + "px";
 
-  const mofuHeight =
-    getMofuHeight(
-      imagePath,
-      mofuWidth
-    );
-
-
-  const rotation =
-    getMofuRotation();
-
-
-  const position =
-    getPositionForMofu(
-      mofuWidth,
-      mofuHeight
-    );
-
-
-  mofu.src =
-    imagePath;
-
-
-  mofu.alt =
-    "モフ";
-
-
-  mofu.className =
-    "mofu-item";
-
-
-  mofu.style.zIndex =
-    1;
-
-
-  mofu.style.width =
-    mofuWidth +
-    "px";
-
-
-  mofu.style.left =
-    position.left +
-    "px";
-
-
-  mofu.style.top =
-    position.top +
-    "px";
-
-
-  mofu.dataset.correct =
-    isCorrect
-      ? "true"
-      : "false";
-
-
-  mofu.dataset.rotation =
-    String(
-      rotation
-    );
-
+  mofu.dataset.correct = isCorrect ? "true" : "false";
+  mofu.dataset.rotation = String(rotation);
+  mofu.dataset.imagePath = imagePath;
 
   saveResponsivePlacementData(
     mofu,
@@ -2682,332 +1393,67 @@ function createMofu(
     mofuWidth
   );
 
-
-  setMofuTransform(
-    mofu,
-    1
-  );
-
-
-  gameScreen.appendChild(
-    mofu
-  );
-
+  setMofuTransform(mofu, 1);
+  gameScreen.appendChild(mofu);
 }
 
 
-function updateGameInfo(
-  numberOfMofus
-) {
+/* ============================================================
+   ゲーム情報表示
+============================================================ */
 
-  const settings =
-    getCurrentModeSettings();
+function updateGameInfo(numberOfMofus) {
+  const settings = getCurrentModeSettings();
 
-
-  modeText.textContent =
-    settings.label;
-
+  modeText.textContent = settings.label;
 
   levelText.textContent =
     currentLevel +
     " / " +
     getMaxLevel();
 
-
   countText.textContent =
     "表示数：" +
     numberOfMofus;
-
 
   typeText.textContent =
     "種類：" +
     settings.images.length;
 
-
-  if (
-    isTestMode === true
-  ) {
-
+  if (isTestMode === true) {
     updateActiveTestModeButton();
-
-
     updateActiveLevelButton();
-
   }
-
 }
 
 
-function createGame() {
-
-  clearGameScreen();
-
-
-  topZIndex =
-    1;
-
-
-  isStageCleared =
-    false;
-
-
-  clearAnswerAnimationTimers();
-
-
-  if (
-    messageTimer !== null
-  ) {
-
-    clearTimeout(
-      messageTimer
-    );
-
-
-    messageTimer =
-      null;
-
-  }
-
-
-  if (
-    nextLevelTimer !== null
-  ) {
-
-    clearTimeout(
-      nextLevelTimer
-    );
-
-
-    nextLevelTimer =
-      null;
-
-  }
-
-
-  const numberOfMofus =
-    getNumberOfMofusForLevel(
-      currentLevel
-    );
-
-
-  createEvenPositions(
-    numberOfMofus
-  );
-
-
-  updateGameInfo(
-    numberOfMofus
-  );
-
-
-  message.textContent =
-    "同じモフをタップしてね";
-
-
-  clearTimeText.textContent =
-    "";
-
-
-  targetImage =
-    getRandomTargetImage();
-
-
-  targetMofu.src =
-    targetImage;
-
-
-  const correctPosition =
-    Math.floor(
-      Math.random() *
-      numberOfMofus
-    );
-
-
-  for (
-    let i = 0;
-    i < numberOfMofus;
-    i++
-  ) {
-
-    if (
-      i ===
-      correctPosition
-    ) {
-
-      createMofu(
-        targetImage,
-        true
-      );
-
-    } else {
-
-      let wrongImage =
-        getRandomImage();
-
-
-      while (
-        wrongImage ===
-        targetImage
-      ) {
-
-        wrongImage =
-          getRandomImage();
-
-      }
-
-
-      createMofu(
-        wrongImage,
-        false
-      );
-
-    }
-
-  }
-
-}
-
-
-function resizeCurrentGameWithoutRandomizing() {
-
-  if (
-    playScreen.hidden === true
-  ) {
-
-    return;
-
-  }
-
-
-  const screenWidth =
-    gameScreen.clientWidth;
-
-
-  const screenHeight =
-    gameScreen.clientHeight;
-
-
-  if (
-    screenWidth <= 0 ||
-    screenHeight <= 0
-  ) {
-
-    return;
-
-  }
-
-
-  const mofuNodeList =
-    gameScreen.querySelectorAll(
-      ".mofu-item"
-    );
-
-
-  for (
-    let i = 0;
-    i < mofuNodeList.length;
-    i++
-  ) {
-
-    const mofu =
-      mofuNodeList[i];
-
-
-    const leftRate =
-      parseFloat(
-        mofu.dataset.leftRate ||
-        "0"
-      );
-
-
-    const topRate =
-      parseFloat(
-        mofu.dataset.topRate ||
-        "0"
-      );
-
-
-    const widthRate =
-      parseFloat(
-        mofu.dataset.widthRate ||
-        "0"
-      );
-
-
-    mofu.style.left =
-      leftRate *
-      screenWidth +
-      "px";
-
-
-    mofu.style.top =
-      topRate *
-      screenHeight +
-      "px";
-
-
-    mofu.style.width =
-      widthRate *
-      screenWidth +
-      "px";
-
-  }
-
-}
-
-
-function getCanvasForImage(
-  imgElement
-) {
-
+/* ============================================================
+   クリック判定用Canvas
+============================================================ */
+
+function getCanvasForImage(imgElement) {
   const imageSource =
     imgElement.currentSrc ||
     imgElement.src;
 
-
-  if (
-    alphaCanvasCache[
-      imageSource
-    ]
-  ) {
-
-    return alphaCanvasCache[
-      imageSource
-    ];
-
+  if (alphaCanvasCache[imageSource]) {
+    return alphaCanvasCache[imageSource];
   }
-
 
   if (
     !imgElement.complete ||
     imgElement.naturalWidth === 0 ||
     imgElement.naturalHeight === 0
   ) {
-
     return null;
-
   }
 
+  const canvas = document.createElement("canvas");
 
-  const canvas =
-    document.createElement(
-      "canvas"
-    );
+  canvas.width = imgElement.naturalWidth;
+  canvas.height = imgElement.naturalHeight;
 
-
-  canvas.width =
-    imgElement.naturalWidth;
-
-
-  canvas.height =
-    imgElement.naturalHeight;
-
-
-  const context =
-    canvas.getContext(
-      "2d"
-    );
-
+  const context = canvas.getContext("2d");
 
   context.drawImage(
     imgElement,
@@ -3015,56 +1461,22 @@ function getCanvasForImage(
     0
   );
 
-
-  alphaCanvasCache[
-    imageSource
-  ] =
-    canvas;
-
+  alphaCanvasCache[imageSource] = canvas;
 
   return canvas;
-
 }
 
-
-function getElementCenter(
-  element
-) {
-
-  const left =
-    parseFloat(
-      element.style.left
-    );
-
-
-  const top =
-    parseFloat(
-      element.style.top
-    );
-
-
-  const width =
-    element.offsetWidth;
-
-
-  const height =
-    element.offsetHeight;
-
+function getElementCenter(element) {
+  const left = parseFloat(element.style.left);
+  const top = parseFloat(element.style.top);
+  const width = element.offsetWidth;
+  const height = element.offsetHeight;
 
   return {
-
-    x:
-      left +
-      width / 2,
-
-    y:
-      top +
-      height / 2
-
+    x: left + width / 2,
+    y: top + height / 2
   };
-
 }
-
 
 function rotatePointBack(
   x,
@@ -3073,379 +1485,216 @@ function rotatePointBack(
   centerY,
   angleDegrees
 ) {
-
   const angleRadians =
     angleDegrees *
     Math.PI /
     180;
 
-
-  const translatedX =
-    x -
-    centerX;
-
-
-  const translatedY =
-    y -
-    centerY;
-
+  const translatedX = x - centerX;
+  const translatedY = y - centerY;
 
   const rotatedX =
-    translatedX *
-    Math.cos(
-      -angleRadians
-    ) -
-    translatedY *
-    Math.sin(
-      -angleRadians
-    );
-
+    translatedX * Math.cos(-angleRadians) -
+    translatedY * Math.sin(-angleRadians);
 
   const rotatedY =
-    translatedX *
-    Math.sin(
-      -angleRadians
-    ) +
-    translatedY *
-    Math.cos(
-      -angleRadians
-    );
-
+    translatedX * Math.sin(-angleRadians) +
+    translatedY * Math.cos(-angleRadians);
 
   return {
-
-    x:
-      rotatedX +
-      centerX,
-
-    y:
-      rotatedY +
-      centerY
-
+    x: rotatedX + centerX,
+    y: rotatedY + centerY
   };
-
 }
 
+function rotatePointForward(
+  x,
+  y,
+  centerX,
+  centerY,
+  angleDegrees
+) {
+  const angleRadians =
+    angleDegrees *
+    Math.PI /
+    180;
+
+  const translatedX = x - centerX;
+  const translatedY = y - centerY;
+
+  const rotatedX =
+    translatedX * Math.cos(angleRadians) -
+    translatedY * Math.sin(angleRadians);
+
+  const rotatedY =
+    translatedX * Math.sin(angleRadians) +
+    translatedY * Math.cos(angleRadians);
+
+  return {
+    x: rotatedX + centerX,
+    y: rotatedY + centerY
+  };
+}
 
 function isPointInsideElement(
   clickX,
   clickY,
   element
 ) {
+  const left = parseFloat(element.style.left);
+  const top = parseFloat(element.style.top);
+  const width = element.offsetWidth;
+  const height = element.offsetHeight;
 
-  const left =
-    parseFloat(
-      element.style.left
-    );
+  const rotation = parseFloat(
+    element.dataset.rotation || "0"
+  );
 
+  const center = getElementCenter(element);
 
-  const top =
-    parseFloat(
-      element.style.top
-    );
+  const unrotatedPoint = rotatePointBack(
+    clickX,
+    clickY,
+    center.x,
+    center.y,
+    rotation
+  );
 
-
-  const width =
-    element.offsetWidth;
-
-
-  const height =
-    element.offsetHeight;
-
-
-  const rotation =
-    parseFloat(
-      element.dataset.rotation ||
-      "0"
-    );
-
-
-  const center =
-    getElementCenter(
-      element
-    );
-
-
-  const unrotatedPoint =
-    rotatePointBack(
-      clickX,
-      clickY,
-      center.x,
-      center.y,
-      rotation
-    );
-
-
-  if (
-    unrotatedPoint.x <
-    left
-  ) {
-
+  if (unrotatedPoint.x < left) {
     return false;
-
   }
 
-
-  if (
-    unrotatedPoint.x >
-    left +
-    width
-  ) {
-
+  if (unrotatedPoint.x > left + width) {
     return false;
-
   }
 
-
-  if (
-    unrotatedPoint.y <
-    top
-  ) {
-
+  if (unrotatedPoint.y < top) {
     return false;
-
   }
 
-
-  if (
-    unrotatedPoint.y >
-    top +
-    height
-  ) {
-
+  if (unrotatedPoint.y > top + height) {
     return false;
-
   }
-
 
   return true;
-
 }
-
 
 function isOpaquePixelAtPoint(
   imgElement,
   clickX,
   clickY
 ) {
+  const canvas = getCanvasForImage(imgElement);
 
-  const canvas =
-    getCanvasForImage(
-      imgElement
-    );
-
-
-  if (
-    canvas === null
-  ) {
-
+  if (canvas === null) {
     return false;
-
   }
 
+  const left = parseFloat(imgElement.style.left);
+  const top = parseFloat(imgElement.style.top);
+  const displayedWidth = imgElement.offsetWidth;
+  const displayedHeight = imgElement.offsetHeight;
 
-  const left =
-    parseFloat(
-      imgElement.style.left
-    );
+  if (
+    displayedWidth <= 0 ||
+    displayedHeight <= 0
+  ) {
+    return false;
+  }
 
+  const rotation = parseFloat(
+    imgElement.dataset.rotation || "0"
+  );
 
-  const top =
-    parseFloat(
-      imgElement.style.top
-    );
+  const center = getElementCenter(imgElement);
 
+  const unrotatedPoint = rotatePointBack(
+    clickX,
+    clickY,
+    center.x,
+    center.y,
+    rotation
+  );
 
-  const displayedWidth =
-    imgElement.offsetWidth;
+  const localX = unrotatedPoint.x - left;
+  const localY = unrotatedPoint.y - top;
 
+  const scaleX = canvas.width / displayedWidth;
+  const scaleY = canvas.height / displayedHeight;
 
-  const displayedHeight =
-    imgElement.offsetHeight;
-
-
-  const rotation =
-    parseFloat(
-      imgElement.dataset.rotation ||
-      "0"
-    );
-
-
-  const center =
-    getElementCenter(
-      imgElement
-    );
-
-
-  const unrotatedPoint =
-    rotatePointBack(
-      clickX,
-      clickY,
-      center.x,
-      center.y,
-      rotation
-    );
-
-
-  const localX =
-    unrotatedPoint.x -
-    left;
-
-
-  const localY =
-    unrotatedPoint.y -
-    top;
-
-
-  const scaleX =
-    canvas.width /
-    displayedWidth;
-
-
-  const scaleY =
-    canvas.height /
-    displayedHeight;
-
-
-  const imageX =
-    Math.floor(
-      localX *
-      scaleX
-    );
-
-
-  const imageY =
-    Math.floor(
-      localY *
-      scaleY
-    );
-
+  const imageX = Math.floor(localX * scaleX);
+  const imageY = Math.floor(localY * scaleY);
 
   if (
     imageX < 0 ||
-    imageX >=
-    canvas.width ||
+    imageX >= canvas.width ||
     imageY < 0 ||
-    imageY >=
-    canvas.height
+    imageY >= canvas.height
   ) {
-
     return false;
-
   }
 
+  const context = canvas.getContext("2d");
 
-  const context =
-    canvas.getContext(
-      "2d"
-    );
+  const pixelData = context.getImageData(
+    imageX,
+    imageY,
+    1,
+    1
+  ).data;
 
-
-  const pixelData =
-    context.getImageData(
-      imageX,
-      imageY,
-      1,
-      1
-    ).data;
-
-
-  const alpha =
-    pixelData[3];
-
+  const alpha = pixelData[3];
 
   return alpha > 0;
-
 }
 
 
-function getTopmostVisibleMofuAtPoint(
-  clickX,
-  clickY
-) {
+/* ============================================================
+   前面順の取得
+============================================================ */
 
-  const mofuNodeList =
-    gameScreen.querySelectorAll(
-      ".mofu-item"
-    );
-
-
-  const mofuEntries =
-    [];
-
-
-  for (
-    let i = 0;
-    i < mofuNodeList.length;
-    i++
-  ) {
-
-    mofuEntries.push({
-
-      element:
-        mofuNodeList[i],
-
-      order:
-        i
-
-    });
-
-  }
-
-
-  mofuEntries.sort(
-    function (
-      a,
-      b
-    ) {
-
-      const zA =
-        parseInt(
-          a.element.style.zIndex ||
-          "0",
-          10
-        );
-
-
-      const zB =
-        parseInt(
-          b.element.style.zIndex ||
-          "0",
-          10
-        );
-
-
-      if (
-        zA !== zB
-      ) {
-
-        return (
-          zB -
-          zA
-        );
-
-      }
-
-
-      return (
-        b.order -
-        a.order
-      );
-
-    }
+function getMofuEntriesFrontToBack() {
+  const mofuNodeList = gameScreen.querySelectorAll(
+    ".mofu-item"
   );
 
+  const mofuEntries = [];
 
-  for (
-    let i = 0;
-    i < mofuEntries.length;
-    i++
-  ) {
+  for (let i = 0; i < mofuNodeList.length; i++) {
+    mofuEntries.push({
+      element: mofuNodeList[i],
+      order: i
+    });
+  }
 
-    const mofu =
-      mofuEntries[i]
-        .element;
+  mofuEntries.sort(function (a, b) {
+    const zA = parseInt(
+      a.element.style.zIndex || "0",
+      10
+    );
 
+    const zB = parseInt(
+      b.element.style.zIndex || "0",
+      10
+    );
+
+    if (zA !== zB) {
+      return zB - zA;
+    }
+
+    return b.order - a.order;
+  });
+
+  return mofuEntries;
+}
+
+function getTopmostVisibleMofuAtPointFromEntries(
+  clickX,
+  clickY,
+  mofuEntries
+) {
+  for (let i = 0; i < mofuEntries.length; i++) {
+    const mofu = mofuEntries[i].element;
 
     if (
       isPointInsideElement(
@@ -3454,11 +1703,8 @@ function getTopmostVisibleMofuAtPoint(
         mofu
       ) === false
     ) {
-
       continue;
-
     }
-
 
     if (
       isOpaquePixelAtPoint(
@@ -3467,367 +1713,538 @@ function getTopmostVisibleMofuAtPoint(
         clickY
       ) === true
     ) {
-
       return mofu;
-
     }
-
   }
 
-
   return null;
-
 }
 
+function getTopmostVisibleMofuAtPoint(
+  clickX,
+  clickY
+) {
+  const mofuEntries = getMofuEntriesFrontToBack();
+
+  return getTopmostVisibleMofuAtPointFromEntries(
+    clickX,
+    clickY,
+    mofuEntries
+  );
+}
+
+
+/* ============================================================
+   正解モフ取得
+============================================================ */
 
 function getCorrectMofuElement() {
+  const mofuNodeList = gameScreen.querySelectorAll(
+    ".mofu-item"
+  );
 
-  const mofuNodeList =
-    gameScreen.querySelectorAll(
-      ".mofu-item"
-    );
+  for (let i = 0; i < mofuNodeList.length; i++) {
+    const mofu = mofuNodeList[i];
 
-
-  for (
-    let i = 0;
-    i < mofuNodeList.length;
-    i++
-  ) {
-
-    const mofu =
-      mofuNodeList[i];
-
-
-    if (
-      mofu.dataset.correct ===
-      "true"
-    ) {
-
+    if (mofu.dataset.correct === "true") {
       return mofu;
-
     }
-
   }
-
 
   return null;
-
 }
 
 
-function revealAnswer() {
+/* ============================================================
+   回答不能配置対策
+============================================================ */
 
-  unlockAudioOnce();
-
-
-  if (
-    isStageCleared === true
-  ) {
-
-    return;
-
-  }
-
-
-  const correctMofu =
-    getCorrectMofuElement();
-
-
-  if (
-    correctMofu === null
-  ) {
-
-    return;
-
-  }
-
-
-  markAnswerUsed();
-
-
-  playSe(
-    "reveal"
+function isPointInsideGameScreen(x, y) {
+  return (
+    x >= 0 &&
+    x <= gameScreen.clientWidth &&
+    y >= 0 &&
+    y <= gameScreen.clientHeight
   );
-
-
-  /*
-    答え表示では
-    正解モフを最前面には移動しません。
-
-    元のレイヤー位置のまま
-    拡大縮小だけを行います。
-  */
-  animateAnswerMofu(
-    correctMofu
-  );
-
-
-  showAnswerMessage();
-
 }
 
-
-function handleMofuClick(
-  mofuElement
+function isCorrectMofuClickable(
+  correctMofu,
+  mofuEntries
 ) {
-
-  unlockAudioOnce();
-
-
-  if (
-    isStageCleared === true
-  ) {
-
-    return;
-
+  if (correctMofu === null) {
+    return false;
   }
 
+  const left = parseFloat(correctMofu.style.left);
+  const top = parseFloat(correctMofu.style.top);
+  const width = correctMofu.offsetWidth;
+  const height = correctMofu.offsetHeight;
 
-  bringToFront(
-    mofuElement
+  if (width <= 0 || height <= 0) {
+    return true;
+  }
+
+  const rotation = parseFloat(
+    correctMofu.dataset.rotation || "0"
   );
 
+  const center = getElementCenter(correctMofu);
 
-  if (
-    mofuElement.dataset.correct ===
-    "true"
+  let visibleSampleCount = 0;
+
+  for (
+    let row = 0;
+    row < answerVisibilityGridSize;
+    row++
   ) {
-
-    isStageCleared =
-      true;
-
-
-    playSe(
-      "correct"
-    );
-
-
-    showNextLevelMessage();
-
-
-    if (
-      currentLevel >=
-      getMaxLevel()
+    for (
+      let column = 0;
+      column < answerVisibilityGridSize;
+      column++
     ) {
+      const localX =
+        left +
+        width *
+        ((column + 0.5) / answerVisibilityGridSize);
 
-      stopGameTimer();
+      const localY =
+        top +
+        height *
+        ((row + 0.5) / answerVisibilityGridSize);
 
-
-      showClearTime();
-
-    }
-
-
-    nextLevelTimer =
-      setTimeout(
-        function () {
-
-          goToNextLevel();
-
-        },
-        1000
+      const rotatedPoint = rotatePointForward(
+        localX,
+        localY,
+        center.x,
+        center.y,
+        rotation
       );
 
-  } else {
+      if (
+        isPointInsideGameScreen(
+          rotatedPoint.x,
+          rotatedPoint.y
+        ) === false
+      ) {
+        continue;
+      }
 
-    playSe(
-      "wrong"
-    );
+      if (
+        isOpaquePixelAtPoint(
+          correctMofu,
+          rotatedPoint.x,
+          rotatedPoint.y
+        ) === false
+      ) {
+        continue;
+      }
 
+      const topmostMofu =
+        getTopmostVisibleMofuAtPointFromEntries(
+          rotatedPoint.x,
+          rotatedPoint.y,
+          mofuEntries
+        );
 
-    showWrongMessage();
+      if (topmostMofu === correctMofu) {
+        visibleSampleCount = visibleSampleCount + 1;
 
+        if (
+          visibleSampleCount >=
+          minimumAnswerVisibleSamplePoints
+        ) {
+          return true;
+        }
+      }
+    }
   }
 
+  return false;
 }
 
+function moveMofuToRandomPosition(mofuElement) {
+  const width = parseFloat(mofuElement.style.width);
 
-function handleGameScreenClick(
-  event
-) {
+  const imagePath =
+    mofuElement.dataset.imagePath ||
+    mofuElement.getAttribute("src") ||
+    "";
 
-  const rect =
-    gameScreen
-      .getBoundingClientRect();
-
-
-  const clickX =
-    event.clientX -
-    rect.left;
-
-
-  const clickY =
-    event.clientY -
-    rect.top;
-
-
-  const selectedMofu =
-    getTopmostVisibleMofuAtPoint(
-      clickX,
-      clickY
-    );
-
-
-  if (
-    selectedMofu === null
-  ) {
-
-    return;
-
-  }
-
-
-  handleMofuClick(
-    selectedMofu
+  const height = getMofuHeight(
+    imagePath,
+    width
   );
 
+  const newPosition = getRandomPosition(
+    width,
+    height
+  );
+
+  mofuElement.style.left =
+    newPosition.left + "px";
+
+  mofuElement.style.top =
+    newPosition.top + "px";
+
+  saveResponsivePlacementData(
+    mofuElement,
+    newPosition.left,
+    newPosition.top,
+    width
+  );
 }
 
+function ensureCorrectMofuClickable() {
+  const correctMofu = getCorrectMofuElement();
+
+  if (correctMofu === null) {
+    return;
+  }
+
+  const mofuEntries = getMofuEntriesFrontToBack();
+
+  if (
+    isCorrectMofuClickable(
+      correctMofu,
+      mofuEntries
+    ) === true
+  ) {
+    return;
+  }
+
+  for (
+    let retry = 0;
+    retry < maxAnswerPlacementRetries;
+    retry++
+  ) {
+    moveMofuToRandomPosition(correctMofu);
+
+    if (
+      isCorrectMofuClickable(
+        correctMofu,
+        mofuEntries
+      ) === true
+    ) {
+      return;
+    }
+  }
+
+  /*
+    30回再配置しても見える場所が見つからない場合の最終保険です。
+    通常はここまで来ません。
+
+    回答不能だけは避けるため、正解モフを最後に前面へ出します。
+    「答えを表示」を押したときに前面へ出す処理とは別です。
+  */
+  topZIndex = topZIndex + 1;
+  correctMofu.style.zIndex = topZIndex;
+}
+
+
+/* ============================================================
+   ゲーム作成
+============================================================ */
+
+function createGame() {
+  clearGameScreen();
+
+  topZIndex = 1;
+  isStageCleared = false;
+
+  clearAnswerAnimationTimers();
+
+  if (messageTimer !== null) {
+    clearTimeout(messageTimer);
+    messageTimer = null;
+  }
+
+  if (nextLevelTimer !== null) {
+    clearTimeout(nextLevelTimer);
+    nextLevelTimer = null;
+  }
+
+  const numberOfMofus = getNumberOfMofusForLevel(
+    currentLevel
+  );
+
+  createEvenPositions(numberOfMofus);
+  updateGameInfo(numberOfMofus);
+
+  message.textContent = "同じモフをタップしてね";
+  clearTimeText.textContent = "";
+
+  targetImage = getRandomTargetImage();
+  targetMofu.src = targetImage;
+
+  const correctPosition = Math.floor(
+    Math.random() * numberOfMofus
+  );
+
+  for (let i = 0; i < numberOfMofus; i++) {
+    if (i === correctPosition) {
+      createMofu(
+        targetImage,
+        true
+      );
+    } else {
+      let wrongImage = getRandomImage();
+
+      while (wrongImage === targetImage) {
+        wrongImage = getRandomImage();
+      }
+
+      createMofu(
+        wrongImage,
+        false
+      );
+    }
+  }
+
+  /*
+    全配置後に、正解モフが実際にクリックできるか確認します。
+    完全に隠れていた場合だけ、正解モフを再配置します。
+  */
+  requestAnimationFrame(function () {
+    if (isStageCleared === false) {
+      ensureCorrectMofuClickable();
+    }
+  });
+}
+
+
+/* ============================================================
+   リサイズ
+
+   Chromeのページズームや画面サイズ変更でも
+   ステージを再抽選しません。
+============================================================ */
+
+function resizeCurrentGameWithoutRandomizing() {
+  if (playScreen.hidden === true) {
+    return;
+  }
+
+  const screenWidth = gameScreen.clientWidth;
+  const screenHeight = gameScreen.clientHeight;
+
+  if (screenWidth <= 0 || screenHeight <= 0) {
+    return;
+  }
+
+  const mofuNodeList = gameScreen.querySelectorAll(
+    ".mofu-item"
+  );
+
+  for (let i = 0; i < mofuNodeList.length; i++) {
+    const mofu = mofuNodeList[i];
+
+    const leftRate = parseFloat(
+      mofu.dataset.leftRate || "0"
+    );
+
+    const topRate = parseFloat(
+      mofu.dataset.topRate || "0"
+    );
+
+    const widthRate = parseFloat(
+      mofu.dataset.widthRate || "0"
+    );
+
+    mofu.style.left =
+      leftRate *
+      screenWidth +
+      "px";
+
+    mofu.style.top =
+      topRate *
+      screenHeight +
+      "px";
+
+    mofu.style.width =
+      widthRate *
+      screenWidth +
+      "px";
+  }
+}
 
 function handleResize() {
-
-  if (
-    playScreen.hidden === true
-  ) {
-
+  if (playScreen.hidden === true) {
     return;
-
   }
 
-
-  if (
-    resizeTimer !== null
-  ) {
-
-    clearTimeout(
-      resizeTimer
-    );
-
+  if (resizeTimer !== null) {
+    clearTimeout(resizeTimer);
   }
 
-
-  resizeTimer =
-    setTimeout(
-      function () {
-
-        /*
-          Chromeのページズームや
-          画面サイズ変更でも
-          createGame()は呼びません。
-
-          正解・画像・回転・配置は
-          再抽選しません。
-        */
-
-        resizeCurrentGameWithoutRandomizing();
-
-
-        resizeTimer =
-          null;
-
-      },
-      100
-    );
-
+  resizeTimer = setTimeout(function () {
+    resizeCurrentGameWithoutRandomizing();
+    resizeTimer = null;
+  }, 100);
 }
 
 
-const titleModeButtonList =
-  document.querySelectorAll(
-    ".title-mode-button"
+/* ============================================================
+   答えを表示
+============================================================ */
+
+function revealAnswer() {
+  unlockAudioOnce();
+
+  if (isStageCleared === true) {
+    return;
+  }
+
+  const correctMofu = getCorrectMofuElement();
+
+  if (correctMofu === null) {
+    return;
+  }
+
+  markAnswerUsed();
+  playSe("reveal");
+
+  /*
+    答え表示では正解モフを最前面へ移動しません。
+    現在のレイヤー位置のまま拡大縮小します。
+  */
+  animateAnswerMofu(correctMofu);
+  showAnswerMessage();
+}
+
+
+/* ============================================================
+   ゲーム中のクリック
+============================================================ */
+
+function handleMofuClick(mofuElement) {
+  unlockAudioOnce();
+
+  if (isStageCleared === true) {
+    return;
+  }
+
+  bringToFront(mofuElement);
+
+  if (mofuElement.dataset.correct === "true") {
+    isStageCleared = true;
+
+    playSe("correct");
+    showNextLevelMessage();
+
+    if (currentLevel >= getMaxLevel()) {
+      stopGameTimer();
+      showClearTime();
+    }
+
+    nextLevelTimer = setTimeout(function () {
+      goToNextLevel();
+    }, 1000);
+  } else {
+    playSe("wrong");
+    showWrongMessage();
+  }
+}
+
+function handleGameScreenClick(event) {
+  const rect = gameScreen.getBoundingClientRect();
+
+  const clickX = event.clientX - rect.left;
+  const clickY = event.clientY - rect.top;
+
+  const selectedMofu = getTopmostVisibleMofuAtPoint(
+    clickX,
+    clickY
   );
 
+  if (selectedMofu === null) {
+    return;
+  }
 
-for (
-  let i = 0;
-  i < titleModeButtonList.length;
-  i++
-) {
+  handleMofuClick(selectedMofu);
+}
 
-  titleModeButtonList[
-    i
-  ].addEventListener(
+
+/* ============================================================
+   イベント登録
+============================================================ */
+
+const titleModeButtonList = document.querySelectorAll(
+  ".title-mode-button"
+);
+
+for (let i = 0; i < titleModeButtonList.length; i++) {
+  titleModeButtonList[i].addEventListener(
     "click",
     handleTitleModeButtonClick
   );
-
 }
 
 
-backTitleButton.addEventListener(
-  "click",
-  function () {
-
-    unlockAudioOnce();
-
-
-    showTitleScreen();
-
-  }
-);
+/* タイトル画面 BGM */
+titleBgmButton.addEventListener("click", function () {
+  unlockAudioOnce();
+  toggleBgm();
+});
 
 
-bgmButton.addEventListener(
-  "click",
-  function () {
-
-    unlockAudioOnce();
-
-
-    toggleBgm();
-
-  }
-);
+/* タイトル画面 SE */
+titleSeButton.addEventListener("click", function () {
+  unlockAudioOnce();
+  toggleSe();
+});
 
 
-seButton.addEventListener(
-  "click",
-  function () {
-
-    unlockAudioOnce();
-
-
-    toggleSe();
-
-  }
-);
+/* ゲーム画面からタイトルへ戻る */
+backTitleButton.addEventListener("click", function () {
+  unlockAudioOnce();
+  playUiClickSe();
+  showTitleScreen();
+});
 
 
+/* ゲーム画面 BGM */
+bgmButton.addEventListener("click", function () {
+  unlockAudioOnce();
+  toggleBgm();
+});
+
+
+/* ゲーム画面 SE */
+seButton.addEventListener("click", function () {
+  unlockAudioOnce();
+  toggleSe();
+});
+
+
+/* 答えを表示 */
 answerButton.addEventListener(
   "click",
   revealAnswer
 );
 
 
+/* ゲーム画面クリック */
 gameScreen.addEventListener(
   "click",
   handleGameScreenClick
 );
 
 
-window.addEventListener(
-  "resize",
-  function () {
+/* リサイズ */
+window.addEventListener("resize", function () {
+  handleResize();
+});
 
-    handleResize();
 
-  }
-);
-
+/* ============================================================
+   初期化
+============================================================ */
 
 setupSoundVolumes();
-
-
 setupTargetMofuSize();
-
-
 updateSoundButtons();
 
-
-preloadImages(
-  function () {
-
-    showTitleScreen();
-
-  }
-);
+preloadImages(function () {
+  showTitleScreen();
+});
